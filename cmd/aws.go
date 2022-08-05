@@ -6,22 +6,16 @@ import (
 )
 
 var (
-	appName   string
-	startURL  string
-	accountID string
-	roleName  string
-	region    string
+	appName  string
+	startURL string
+	region   string
 )
 
 func init() {
 	rootCmd.AddCommand(ssoConfig)
 	ssoConfig.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoConfig.PersistentFlags().StringVar(&accountID, "accountID", "", "Account id of AWS where SSO is configured")
-	ssoConfig.PersistentFlags().StringVar(&roleName, "roleName", "", "RoleName to assume")
 	ssoConfig.PersistentFlags().StringVar(&region, "region", "", "AWS region")
 	ssoConfig.MarkPersistentFlagRequired("startURL")
-	ssoConfig.MarkPersistentFlagRequired("accountID")
-	ssoConfig.MarkPersistentFlagRequired("roleName")
 	ssoConfig.MarkPersistentFlagRequired("region")
 }
 
@@ -30,7 +24,16 @@ var ssoConfig = &cobra.Command{
 	Short: "Setup configuration",
 	Long:  "Setup SSO configuration like SSO_START_URL, AWS_REGION, ROLE_NAME, ACCOUNT_ID....",
 	Run: func(cmd *cobra.Command, args []string) {
-		sso.Login(startURL, accountID, roleName, region)
+		sso.Login(startURL, region)
+	},
+}
+
+var ssoInit = &cobra.Command{
+	Use:   "init",
+	Short: "Setup your information regarding to your SSO",
+	Long:  "Setup SSO configuration like SSO Start url, AWS region...",
+	Run: func(cmd *cobra.Command, args []string) {
+		sso.Login(startURL, region)
 	},
 }
 

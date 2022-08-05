@@ -26,14 +26,12 @@ type Configuration struct {
 }
 
 // GetSSOConfig get the user input data
-func GetSSOConfig(appName string, startURL string, accountID string, roleName string, region string) {
+func GetSSOConfig(appName string, startURL string, region string) {
 	fmt.Println("Setting up configuration....")
 
 	config := Configuration{
 		AppName:   appName,
 		StartURL:  startURL,
-		AccountID: accountID,
-		RoleName:  roleName,
 		Region:    region,
 	}
 

@@ -19,7 +19,6 @@ var rootCmd = &cobra.Command{
 
 // Execute blablabla
 func Execute() {
-	//Login()
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Printf("😢 %s\n", err.Error())
 		os.Exit(1)

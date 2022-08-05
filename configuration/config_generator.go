@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"strings"
 
@@ -15,10 +16,10 @@ var key string = ""
 
 // Credentials is a struct to declare .aws/credentials configuration file
 type Credentials struct {
-	Region string `json:"region"`
-	AWSAccessKey string `json:"aws_access_key_id"`
-	AWSSecretAccessKey  string `json:"aws_secret_access_key"`
-	AWSSessionToken string `json:"aws_session_token"`
+	Region             string `json:"region"`
+	AWSAccessKey       string `json:"aws_access_key_id"`
+	AWSSecretAccessKey string `json:"aws_secret_access_key"`
+	AWSSessionToken    string `json:"aws_session_token"`
 }
 
 // Profile is a struct for each account in .aws/credentials configuration file
@@ -35,19 +36,27 @@ func (s Profile) MarshalJSON() ([]byte, error) {
 }
 
 func ConfigGenerator(account string, aws_access_key string, aws_secret_key string, aws_session_token string) {
+	//dirname, err := os.UserHomeDir()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	f, err := os.OpenFile("/tmp/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	//dirname+"/.aws/credentials"
+	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
+	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
+
 	defer f.Close()
 
 	key = account
 	resp := Profile{
 		Credentials{
-			Region: "eu-west-1",
-			AWSAccessKey: aws_access_key,
+			Region:             "eu-west-1",
+			AWSAccessKey:       aws_access_key,
 			AWSSecretAccessKey: aws_secret_key,
-			AWSSessionToken: aws_session_token,
+			AWSSessionToken:    aws_session_token,
 		},
 	}
 

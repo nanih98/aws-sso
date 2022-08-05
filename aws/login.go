@@ -11,14 +11,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sso"
 	"github.com/aws/aws-sdk-go-v2/service/ssooidc"
-	"github.com/pkg/browser"
 	"github.com/nanih98/aws-sso/configuration"
+	"github.com/pkg/browser"
 )
 
 //https://github.com/aws/aws-sdk-go-v2/issues/1222
 
 // Login function blablabla
-func Login(startURL string, accountID string, roleName string, region string) {
+func Login(startURL string, region string) {
 	log.Println("Starting the program....")
 	os.Setenv("AWS_REGION", region)
 
@@ -86,14 +86,6 @@ func Login(startURL string, accountID string, roleName string, region string) {
 		AccessToken: token.AccessToken,
 	})
 
-	f, err := os.OpenFile("/tmp/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-
-	if err != nil {
-		panic(err)
-	}
-
-	defer f.Close()
-
 	for accountPaginator.HasMorePages() {
 		x, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
@@ -129,7 +121,7 @@ func Login(startURL string, accountID string, roleName string, region string) {
 						fmt.Println(err)
 					}
 					fmt.Println("Writing file....")
-					configuration.ConfigGenerator(aws.ToString(y.AccountName), aws.ToString(credentials.RoleCredentials.AccessKeyId),aws.ToString(credentials.RoleCredentials.SecretAccessKey),aws.ToString(credentials.RoleCredentials.SessionToken))
+					configuration.ConfigGenerator(aws.ToString(y.AccountName), aws.ToString(credentials.RoleCredentials.AccessKeyId), aws.ToString(credentials.RoleCredentials.SecretAccessKey), aws.ToString(credentials.RoleCredentials.SessionToken))
 					fmt.Printf("\n\nPrinting credentials")
 					fmt.Println("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId))
 					fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
