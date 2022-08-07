@@ -1,39 +1,47 @@
 package cmd
 
 import (
-	sso "github.com/nanih98/aws-sso/aws"
+	"github.com/nanih98/aws-sso/configuration"
+	"github.com/nanih98/aws-sso/logger"
 	"github.com/spf13/cobra"
 )
 
 var (
-	appName  string
-	startURL string
-	region   string
+	profileName string
+	startURL    string
+	region      string
 )
 
+var log = logger.Logger()
+
 func init() {
-	rootCmd.AddCommand(ssoConfig)
-	ssoConfig.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoConfig.PersistentFlags().StringVar(&region, "region", "", "AWS region")
-	ssoConfig.MarkPersistentFlagRequired("startURL")
-	ssoConfig.MarkPersistentFlagRequired("region")
+	//rootCmd.AddCommand(ssoConfig)
+	rootCmd.AddCommand(ssoInit)
+	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
+	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
+	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	ssoInit.MarkPersistentFlagRequired("startURL")
+	ssoInit.MarkPersistentFlagRequired("region")
+	ssoInit.MarkPersistentFlagRequired("profileName")
+
 }
 
-var ssoConfig = &cobra.Command{
-	Use:   "config",
-	Short: "Setup configuration",
-	Long:  "Setup SSO configuration like SSO_START_URL, AWS_REGION, ROLE_NAME, ACCOUNT_ID....",
-	Run: func(cmd *cobra.Command, args []string) {
-		sso.Login(startURL, region)
-	},
-}
+// var ssoConfig = &cobra.Command{
+// 	Use:   "start",
+// 	Short: "Setup configuration",
+// 	Long:  "Setup SSO configuration like SSO_START_URL, AWS_REGION, ROLE_NAME, ACCOUNT_ID....",
+// 	Run: func(cmd *cobra.Command, args []string) {
+// 		sso.Login(startURL, region)
+// 	},
+// }
 
 var ssoInit = &cobra.Command{
 	Use:   "init",
 	Short: "Setup your information regarding to your SSO",
 	Long:  "Setup SSO configuration like SSO Start url, AWS region...",
 	Run: func(cmd *cobra.Command, args []string) {
-		sso.Login(startURL, region)
+		log.Info("Starting the app")
+		configuration.GetSSOConfig(profileName, startURL, region)
 	},
 }
 

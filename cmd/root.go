@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// Execute blablabla
+// Execute starts the cli
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Printf("😢 %s\n", err.Error())

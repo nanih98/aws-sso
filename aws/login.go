@@ -15,7 +15,6 @@ import (
 	"github.com/pkg/browser"
 )
 
-//https://github.com/aws/aws-sdk-go-v2/issues/1222
 
 // Login function blablabla
 func Login(startURL string, region string) {

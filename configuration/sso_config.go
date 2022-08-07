@@ -3,46 +3,33 @@ package configuration
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/nanih98/aws-sso/utils"
 )
 
-// PrettyStruct convert data to JSON
-// func PrettyStruct(data interface{}) ([]byte, error) {
-// 	val, err := json.MarshalIndent(data, "", "    ")
-// 	if err != nil {
-// 		return ,err
-// 	}
-// 	return val, err
-// }
-
 // Configuration blablabla
 type Configuration struct {
-	AppName   string `json:"appName"`
-	StartURL  string `json:"startUrl"`
-	AccountID string `json:"accountID"`
-	RoleName  string `json:"roleName"`
-	Region    string `json:"region"`
+	ProfileName string `json:"profileName"`
+	StartURL    string `json:"startURL"`
+	Region      string `json:"region"`
 }
 
 // GetSSOConfig get the user input data
-func GetSSOConfig(appName string, startURL string, region string) {
-	fmt.Println("Setting up configuration....")
+func GetSSOConfig(profileName string, startURL string, region string) {
+	log.Println("Setting up configuration...")
 
 	config := Configuration{
-		AppName:   appName,
-		StartURL:  startURL,
-		Region:    region,
+		ProfileName: profileName,
+		StartURL:    startURL,
+		Region:      region,
 	}
 
 	resp, err := json.MarshalIndent(config, "", " ")
 
 	if err != nil {
 		fmt.Println(err)
-	} else {
-		fmt.Printf("%s \n", resp)
 	}
 
-	utils.WriteConfigFile(resp,appName)
-	utils.GetConfigurations()
+	utils.WriteConfigFile(resp, profileName)
 }
