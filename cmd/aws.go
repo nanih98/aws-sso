@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"fmt"
+
+	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
 	"github.com/nanih98/aws-sso/logger"
+	"github.com/nanih98/aws-sso/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -17,54 +21,34 @@ var log = logger.Logger()
 func init() {
 	//rootCmd.AddCommand(ssoConfig)
 	rootCmd.AddCommand(ssoInit)
+	rootCmd.AddCommand(start)
+	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	start.MarkPersistentFlagRequired("profileName")
 	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
 	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
 	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")
 	ssoInit.MarkPersistentFlagRequired("profileName")
-
 }
-
-// var ssoConfig = &cobra.Command{
-// 	Use:   "start",
-// 	Short: "Setup configuration",
-// 	Long:  "Setup SSO configuration like SSO_START_URL, AWS_REGION, ROLE_NAME, ACCOUNT_ID....",
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		sso.Login(startURL, region)
-// 	},
-// }
 
 var ssoInit = &cobra.Command{
 	Use:   "init",
 	Short: "Setup your information regarding to your SSO",
 	Long:  "Setup SSO configuration like SSO Start url, AWS region...",
 	Run: func(cmd *cobra.Command, args []string) {
-		log.Info("Starting the app")
-		configuration.GetSSOConfig(profileName, startURL, region)
+		configuration.GetSSOConfig(log, profileName, startURL, region)
 	},
 }
 
-// var requester = &cobra.Command{
-// 	Use:   "request",
-// 	Short: "Add domain to the request",
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		queryGoogle(domain)
-// 	},
-// }
-
-// func printhelloWorld() {
-// 	fmt.Println("Hello World!")
-// }
-
-// func queryGoogle(domain string) {
-// 	req, err := http.Get(domain)
-
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	defer req.Body.Close()
-
-// 	fmt.Println(req.StatusCode)
-// }
+var start = &cobra.Command{
+	Use:   "start",
+	Short: "Start the application",
+	Long:  "Start the application",
+	Run: func(cmd *cobra.Command, args []string) {
+		filePath := utils.FileExists(log, profileName)
+		fmt.Println(filePath)
+		startURL, region := utils.ReadFile(log, filePath)
+		sso.Login(startURL, region)
+	},
+}

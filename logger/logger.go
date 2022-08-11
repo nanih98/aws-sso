@@ -6,8 +6,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type CustomLogger struct {
+	Log *logrus.Entry
+}
+
+func (c *CustomLogger) Info(msg string) {
+	c.Log.Info(msg)
+}
+
+func (c *CustomLogger) Warn(msg string) {
+	c.Log.Warn(msg)
+}
+
+func (c *CustomLogger) Fatal(msg error) {
+	c.Log.Fatal(msg)
+}
+
 // Logger function
-func Logger() *logrus.Entry {
+func Logger() CustomLogger {
 	var log = &logrus.Logger{
 		Out:       os.Stderr,
 		Formatter: new(logrus.TextFormatter),
@@ -15,14 +31,10 @@ func Logger() *logrus.Entry {
 		Level:     logrus.DebugLevel,
 	}
 
-	// log.SetFormatter(&logrus.TextFormatter{
-	// 	DisableColors: false,
-	// 	FullTimestamp: true,
-	// })
-
 	contextLogger := log.WithFields(logrus.Fields{
 		"app": "aws-sso",
 	})
 
-	return contextLogger
+
+	return CustomLogger{Log: contextLogger}
 }

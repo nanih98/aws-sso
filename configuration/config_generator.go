@@ -5,12 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 
+	"github.com/nanih98/aws-sso/logger"
 	"github.com/pelletier/go-toml/v2"
 )
+
+var log = logger.Logger()
 
 var key string = ""
 
@@ -36,12 +38,12 @@ func (s Profile) MarshalJSON() ([]byte, error) {
 }
 
 func ConfigGenerator(account string, aws_access_key string, aws_secret_key string, aws_session_token string) {
-	//dirname, err := os.UserHomeDir()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	f, err := os.OpenFile("/tmp/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	//dirname+"/.aws/credentials"
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
 	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {

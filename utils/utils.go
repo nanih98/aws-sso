@@ -13,10 +13,10 @@ var log = logger.Logger()
 // WriteConfigFile first initial config file
 func WriteConfigFile(config []byte, profileName string) {
 	directory := UserDirectory()
-	fileName := directory + profileName + "-sso.json"
-	log.Info("Saving profile configuration for", profileName)
+	fileName := directory + profileName + ".json"
+	log.Info("Saving profile configuration for " + profileName)
 	_ = ioutil.WriteFile(fileName, config, 0644)
-	log.Info("Configuration saved in", fileName)
+	log.Info("Configuration saved in " + fileName)
 }
 
 // UserDirectory is a function to check if the directory to store the config exists
@@ -27,13 +27,13 @@ func UserDirectory() string {
 	}
 	configPath := dirname + "/.aws-sso/"
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Warn("Directory", configPath, "don't exists. Creating a new one...")
+		log.Warn("Directory " + configPath + " don't exists. Creating a new one...")
 		err = os.Mkdir(configPath, 0700)
 		if err != nil {
 			log.Fatal(err)
 		}
 	} else {
-		log.Info("Directory", configPath, "exists")
+		log.Info("Directory " + configPath + " exists")
 	}
 	return configPath
 }

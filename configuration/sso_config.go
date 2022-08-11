@@ -3,23 +3,17 @@ package configuration
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
+	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
+	"github.com/nanih98/aws-sso/dto"
 )
 
-// Configuration blablabla
-type Configuration struct {
-	ProfileName string `json:"profileName"`
-	StartURL    string `json:"startURL"`
-	Region      string `json:"region"`
-}
-
 // GetSSOConfig get the user input data
-func GetSSOConfig(profileName string, startURL string, region string) {
-	log.Println("Setting up configuration...")
+func GetSSOConfig(log logger.CustomLogger, profileName string, startURL string, region string) {
+	log.Info("Setting up configuration...")
 
-	config := Configuration{
+	config := dto.Configuration{
 		ProfileName: profileName,
 		StartURL:    startURL,
 		Region:      region,
