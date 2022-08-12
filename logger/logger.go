@@ -35,6 +35,5 @@ func Logger() CustomLogger {
 		"app": "aws-sso",
 	})
 
-
 	return CustomLogger{Log: contextLogger}
 }

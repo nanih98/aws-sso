@@ -15,7 +15,6 @@ import (
 	"github.com/pkg/browser"
 )
 
-
 // Login function blablabla
 func Login(startURL string, region string) {
 	log.Println("Starting the program....")
@@ -128,7 +127,6 @@ func Login(startURL string, region string) {
 					fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
 				}
 			}
-
 		}
 	}
 

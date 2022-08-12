@@ -47,7 +47,6 @@ var start = &cobra.Command{
 	Long:  "Start the application",
 	Run: func(cmd *cobra.Command, args []string) {
 		filePath := utils.FileExists(log, profileName)
-		fmt.Println(filePath)
 		startURL, region := utils.ReadFile(log, filePath)
 		sso.Login(startURL, region)
 	},
