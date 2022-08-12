@@ -12,6 +12,7 @@ permissions:
 
 jobs:
   goreleaser:
+    name: Publish go releases 📦 with Goreleaser
     runs-on: ubuntu-latest
     steps:      
       - name: Checkout
