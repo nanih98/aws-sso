@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - 'master'
+      - 'main'
 
 permissions:
   contents: write
@@ -36,4 +36,4 @@ jobs:
         env:
           # automatically generated at the start of each github action and it can be
           # used in places like here if authentication to github is needed.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
