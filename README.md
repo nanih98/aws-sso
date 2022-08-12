@@ -5,7 +5,7 @@ SSO in AWS using Google external identity provider
 
 SSO in AWS using Google external identity provider
 
-[![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/tests.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/tests.yml)
+[![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/tests.yml/releases.svg)](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml)
 
 ![logo](logo.png)
 
