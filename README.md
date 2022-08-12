@@ -7,7 +7,7 @@ SSO in AWS using Google external identity provider
 
 [![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml)
 
-<img src="logo.png" align="center" alt="logo" width="500"/>
+<img src="logo.png" align="middle" alt="logo" width="500"/>
 
 This is a terminal tool to easly log in in aws using SSO. Build with❤️in Golang
 
