@@ -15,6 +15,7 @@
 </h2>
 
 [![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml)
+[![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/lint.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/lint.yml)
 
 This is a terminal tool to easly log in in aws using SSO. Build with❤️in Golang
 
