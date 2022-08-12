@@ -1,4 +1,4 @@
-name: aws-sso-release
+name: Publish go releases 📦 with Goreleaser
 
 on:
   push:
