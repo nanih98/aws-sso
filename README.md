@@ -1,5 +1,10 @@
-# aws-sso
-SSO in AWS using Google external identity provider
+<p align="center" >
+  <img src="logo.png" alt="logo" width="250"/>
+</p>
+
+<h1 align="center">
+  Get AWS credentials with AWS SSO
+</h1>
 
 ## 🚨NOTE: aws-sso is in BETA🚨
 
@@ -15,8 +20,6 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [aws-sso](#aws-sso)
-  - [🚨NOTE: aws-sso is in BETA🚨](#note-aws-sso-is-in-beta)
 - [Credits](#credits)
 - [License](#license)
 
