@@ -3,16 +3,18 @@
 </p>
 
 <h1 align="center">
-  Get AWS credentials with AWS SSO
+  SSO in AWS using your external identity provider
 </h1>
 
-## 🚨NOTE: aws-sso is in BETA🚨
+<h2 align="center">
+  🚨aws-sso still in ALPHA🚨
+</h2>
 
-SSO in AWS using Google external identity provider
+<h2 align="center">
+  Pipelines
+</h2>
 
 [![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml)
-
-<img src="logo.png" align="middle" alt="logo" width="500"/>
 
 This is a terminal tool to easly log in in aws using SSO. Build with❤️in Golang
 
