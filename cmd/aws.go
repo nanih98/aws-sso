@@ -1,8 +1,6 @@
 package cmd
 
-import (
-	"github.com/nanih98/aws-sso/configuration"
-)
+import "github.com/nanih98/aws-sso/logger"
 
 var (
 	profileName string
@@ -11,8 +9,9 @@ var (
 )
 
 func init() {
-	ssoInit := configuration.InitSsoCommand(profileName, startURL, region)
-	start := configuration.StartCommand(profileName)
+	log := logger.Logger()
+	ssoInit := InitSsoCommand(profileName, startURL, region, &log)
+	start := StartCommand(profileName, &log)
 
 	//rootCmd.AddCommand(ssoConfig)
 	rootCmd.AddCommand(ssoInit)

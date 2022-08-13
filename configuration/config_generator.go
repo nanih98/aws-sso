@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/nanih98/aws-sso/utils"
 	"io"
 	"os"
 	"strings"
@@ -49,15 +50,10 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		},
 	}
 
-	WriteProfileToFile(resp)
+	WriteProfileToFile(resp, utils.GetHomeDir())
 }
 
-func WriteProfileToFile(profile Profile) {
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func WriteProfileToFile(profile Profile, dirname string) {
 	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
 	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
