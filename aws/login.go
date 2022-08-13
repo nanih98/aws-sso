@@ -30,6 +30,9 @@ func Login(startURL string, region string) {
 
 	// trigger OIDC login. open browser to login. close tab once login is done. press enter to continue
 	err = triggerLogin(deviceAuth, err)
+	if err != nil {
+		panic(err)
+	}
 
 	// generate sso token
 	token := generateToken(err, ssooidcClient, register, deviceAuth)
@@ -37,8 +40,8 @@ func Login(startURL string, region string) {
 	// create sso client
 	ssoClient := sso.NewFromConfig(cfg)
 	// list accounts [ONLY provided for better example coverage]
-	fmt.Println("Fetching list of all accounts for user")
 
+	fmt.Println("Fetching list of all accounts for user")
 	accountPaginator := sso.NewListAccountsPaginator(ssoClient, &sso.ListAccountsInput{
 		AccessToken: token.AccessToken,
 	})
@@ -48,15 +51,15 @@ func Login(startURL string, region string) {
 		if err != nil {
 			fmt.Println(err)
 		}
-		for _, y := range listAccountsOutput.AccountList {
-			fmt.Println("-------------------------------------------------------")
-			fmt.Printf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(y.AccountId), aws.ToString(y.AccountName), aws.ToString(y.EmailAddress))
 
+		for _, accountInfo := range listAccountsOutput.AccountList {
+			fmt.Println("-------------------------------------------------------")
+			fmt.Printf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress))
+			fmt.Printf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId))
 			// list roles for a given account [ONLY provided for better example coverage]
-			fmt.Printf("\n\nFetching roles of account %v for user\n", aws.ToString(y.AccountId))
 			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
 				AccessToken: token.AccessToken,
-				AccountId:   y.AccountId,
+				AccountId:   accountInfo.AccountId,
 			})
 
 			for rolePaginator.HasMorePages() {
@@ -80,7 +83,7 @@ func Login(startURL string, region string) {
 
 					printLoggingStatus(credentials)
 					configuration.ConfigGenerator(
-						aws.ToString(y.AccountName),
+						aws.ToString(accountInfo.AccountName),
 						aws.ToString(credentials.RoleCredentials.AccessKeyId),
 						aws.ToString(credentials.RoleCredentials.SecretAccessKey),
 						aws.ToString(credentials.RoleCredentials.SessionToken))
