@@ -29,14 +29,7 @@ func Login(startURL string, region string) {
 	ssooidcClient, register, deviceAuth := setupSsoOidcClient(startURL, cfg, err)
 
 	// trigger OIDC login. open browser to login. close tab once login is done. press enter to continue
-	url := aws.ToString(deviceAuth.VerificationUriComplete)
-	fmt.Printf("If browser is not opened automatically, please open link:\n%v\n", url)
-	err = browser.OpenURL(url)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("Press ENTER key once login is done")
-	_ = bufio.NewScanner(os.Stdin).Scan()
+	err = triggerLogin(deviceAuth, err)
 
 	// generate sso token
 	token := generateToken(err, ssooidcClient, register, deviceAuth)
@@ -51,11 +44,11 @@ func Login(startURL string, region string) {
 	})
 
 	for accountPaginator.HasMorePages() {
-		x, err := accountPaginator.NextPage(context.TODO())
+		listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
 			fmt.Println(err)
 		}
-		for _, y := range x.AccountList {
+		for _, y := range listAccountsOutput.AccountList {
 			fmt.Println("-------------------------------------------------------")
 			fmt.Printf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(y.AccountId), aws.ToString(y.AccountName), aws.ToString(y.EmailAddress))
 
@@ -67,19 +60,19 @@ func Login(startURL string, region string) {
 			})
 
 			for rolePaginator.HasMorePages() {
-				z, err := rolePaginator.NextPage(context.TODO())
+				listAccountRolesOutput, err := rolePaginator.NextPage(context.TODO())
 
 				if err != nil {
 					fmt.Println(err)
 				}
 
-				for _, p := range z.RoleList {
-					fmt.Printf("Account ID: %v Role Name: %v\n", aws.ToString(p.AccountId), aws.ToString(p.RoleName))
+				for _, roleInfo := range listAccountRolesOutput.RoleList {
+					fmt.Printf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName))
 					fmt.Println("Fetching credentials....")
 					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
 						AccessToken: token.AccessToken,
-						AccountId:   p.AccountId,
-						RoleName:    p.RoleName,
+						AccountId:   roleInfo.AccountId,
+						RoleName:    roleInfo.RoleName,
 					})
 					if err != nil {
 						fmt.Println(err)
@@ -113,6 +106,18 @@ func Login(startURL string, region string) {
 	// fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
 	// fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
 	// fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
+}
+
+func triggerLogin(deviceAuth *ssooidc.StartDeviceAuthorizationOutput, err error) error {
+	url := aws.ToString(deviceAuth.VerificationUriComplete)
+	fmt.Printf("If browser is not opened automatically, please open link:\n%v\n", url)
+	err = browser.OpenURL(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Press ENTER key once login is done")
+	_ = bufio.NewScanner(os.Stdin).Scan()
+	return err
 }
 
 func setupSsoOidcClient(startURL string, cfg aws.Config, err error) (*ssooidc.Client, *ssooidc.RegisterClientOutput, *ssooidc.StartDeviceAuthorizationOutput) {
