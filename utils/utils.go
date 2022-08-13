@@ -21,21 +21,22 @@ func WriteConfigFile(config []byte, profileName string) {
 
 // UserDirectory is a function to check if the directory to store the config exists
 func UserDirectory() string {
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
+	configPath := GetHomeDir() + "/.aws-sso/"
+	if err := dirExists(configPath); err != nil {
+		log.Fatal(fmt.Errorf("could not create the directory: %v", err))
 	}
-	configPath := dirname + "/.aws-sso/"
+	return configPath
+}
+
+func dirExists(configPath string) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Warn("Directory " + configPath + " don't exists. Creating a new one...")
 		err = os.Mkdir(configPath, 0700)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-	} else {
-		log.Info("Directory " + configPath + " exists")
 	}
-	return configPath
+	return nil
 }
 
 // GetConfigurations is a blablabla

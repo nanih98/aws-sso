@@ -21,16 +21,10 @@ func checkFileExists(filePath string) bool {
 func FileExists(log *logger.CustomLogger, profileName string) string {
 	// lifullconnect-sso.json
 	filePath := profileName + ".json"
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
+	configPath := GetHomeDir() + "/.aws-sso/" + filePath
+	fileExist := checkFileExists(configPath)
 
-	configPath := dirname + "/.aws-sso/" + filePath
-
-	isFileExist := checkFileExists(configPath)
-
-	if !isFileExist {
+	if !fileExist {
 		log.Fatal(fmt.Errorf("profile don't exists"))
 		return ""
 	}
@@ -40,15 +34,15 @@ func FileExists(log *logger.CustomLogger, profileName string) string {
 }
 
 func ReadFile(log *logger.CustomLogger, filePath string) (string, string) {
+	var data dto.Configuration
+
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Now let's unmarshall the data into `payload`
-	var data dto.Configuration
 	err = json.Unmarshal(content, &data)
-
 	if err != nil {
 		log.Fatal(err)
 	}
