@@ -12,9 +12,10 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
-var log = logger.Logger()
-
-var key string = ""
+var (
+	log = logger.Logger()
+	key = ""
+)
 
 // Credentials is a struct to declare .aws/credentials configuration file
 type Credentials struct {
@@ -37,7 +38,21 @@ func (s Profile) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-func ConfigGenerator(account string, aws_access_key string, aws_secret_key string, aws_session_token string) {
+func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) {
+	key = account
+	resp := Profile{
+		Credentials{
+			Region:             "eu-west-1",
+			AWSAccessKey:       awsAccessKey,
+			AWSSecretAccessKey: awsSecretKey,
+			AWSSessionToken:    awsSessionToken,
+		},
+	}
+
+	WriteProfileToFile(resp)
+}
+
+func WriteProfileToFile(profile Profile) {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -52,17 +67,7 @@ func ConfigGenerator(account string, aws_access_key string, aws_secret_key strin
 
 	defer f.Close()
 
-	key = account
-	resp := Profile{
-		Credentials{
-			Region:             "eu-west-1",
-			AWSAccessKey:       aws_access_key,
-			AWSSecretAccessKey: aws_secret_key,
-			AWSSessionToken:    aws_session_token,
-		},
-	}
-
-	data, _ := json.Marshal(resp)
+	data, _ := json.Marshal(profile)
 	b := new(bytes.Buffer)
 	convert(strings.NewReader(string(data)), b)
 	fmt.Printf(b.String())

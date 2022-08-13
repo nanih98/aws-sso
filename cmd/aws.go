@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
 	"github.com/nanih98/aws-sso/logger"
