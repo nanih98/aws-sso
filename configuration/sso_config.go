@@ -2,8 +2,6 @@ package configuration
 
 import (
 	"encoding/json"
-	"fmt"
-
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
@@ -22,8 +20,8 @@ func GetSSOConfig(log *logger.CustomLogger, profileName string, startURL string,
 	resp, err := json.MarshalIndent(config, "", " ")
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	utils.WriteConfigFile(resp, profileName)
+	utils.WriteConfigFile(resp, profileName, log)
 }

@@ -8,11 +8,12 @@ import (
 	"github.com/nanih98/aws-sso/logger"
 )
 
-var log = logger.Logger()
-
 // WriteConfigFile first initial config file
-func WriteConfigFile(config []byte, profileName string) {
-	directory := UserDirectory()
+func WriteConfigFile(config []byte, profileName string, log *logger.CustomLogger) {
+	directory, err := UserDirectory(log)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fileName := directory + profileName + ".json"
 	log.Info("Saving profile configuration for " + profileName)
 	_ = ioutil.WriteFile(fileName, config, 0644)
@@ -20,15 +21,15 @@ func WriteConfigFile(config []byte, profileName string) {
 }
 
 // UserDirectory is a function to check if the directory to store the config exists
-func UserDirectory() string {
-	configPath := GetHomeDir() + "/.aws-sso/"
-	if err := dirExists(configPath); err != nil {
-		log.Fatal(fmt.Errorf("could not create the directory: %v", err))
+func UserDirectory(log *logger.CustomLogger) (string, error) {
+	configPath := GetHomeDir(log) + "/.aws-sso/"
+	if err := dirExists(configPath, log); err != nil {
+		return "", fmt.Errorf("could not create the directory: %v", err)
 	}
-	return configPath
+	return configPath, nil
 }
 
-func dirExists(configPath string) error {
+func dirExists(configPath string, log *logger.CustomLogger) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Warn("Directory " + configPath + " don't exists. Creating a new one...")
 		err = os.Mkdir(configPath, 0700)
@@ -40,21 +41,21 @@ func dirExists(configPath string) error {
 }
 
 // GetConfigurations is a blablabla
-func GetConfigurations() {
-	files, err := ioutil.ReadDir("/tmp/aws-sso/")
-	if err != nil {
-		log.Fatal(err)
-	}
+//func GetConfigurations() {
+//	files, err := ioutil.ReadDir("/tmp/aws-sso/")
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	for _, file := range files {
+//		fmt.Println(file.Name(), file.IsDir())
+//	}
+//}
 
-	for _, file := range files {
-		fmt.Println(file.Name(), file.IsDir())
-	}
-}
-
-func GetHomeDir() string {
+func GetHomeDir(logger *logger.CustomLogger) string {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 	return dirname
 }
