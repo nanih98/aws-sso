@@ -21,6 +21,7 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [Credits](#credits)
+  - [Contributors](#contributors)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -29,6 +30,11 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 # Credits 
 
 - [Github issue](https://github.com/aws/aws-sdk-go-v2/issues/1222)
+
+## Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/nanih98/aws-sso/graphs/contributors"><img src="https://opencollective.com/aws-sso/contributors.svg?width=890" /></a>
 
 
 # License
