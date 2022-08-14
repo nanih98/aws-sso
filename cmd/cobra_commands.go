@@ -27,7 +27,7 @@ func StartCommand(profileName *string, log *logger.CustomLogger) *cobra.Command 
 		Run: func(cmd *cobra.Command, args []string) {
 			filePath := utils.FileExists(log, *profileName)
 			startURL, region := utils.ReadFile(log, filePath)
-			sso.Login(startURL, region)
+			sso.Login(startURL, region, sso.NewLogin(log))
 		},
 	}
 }

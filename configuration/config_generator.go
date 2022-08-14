@@ -9,14 +9,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nanih98/aws-sso/logger"
 	"github.com/pelletier/go-toml/v2"
 )
 
-var (
-	log = logger.Logger()
-	key = ""
-)
+var key = ""
 
 // Credentials is a struct to declare .aws/credentials configuration file
 type Credentials struct {
@@ -39,7 +35,7 @@ func (s Profile) MarshalJSON() ([]byte, error) {
 	return json.Marshal(data)
 }
 
-func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) {
+func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) error {
 	key = account
 	resp := Profile{
 		Credentials{
@@ -50,15 +46,19 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		},
 	}
 
-	WriteProfileToFile(resp, utils.GetHomeDir())
+	err := WriteProfileToFile(resp, utils.GetHomeDir())
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func WriteProfileToFile(profile Profile, dirname string) {
+func WriteProfileToFile(profile Profile, dirname string) error {
 	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
 	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer f.Close()
@@ -68,6 +68,7 @@ func WriteProfileToFile(profile Profile, dirname string) {
 	convert(strings.NewReader(string(data)), b)
 	fmt.Printf(b.String())
 	f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+	return nil
 }
 
 func convert(r io.Reader, w io.Writer) error {
