@@ -1,5 +1,12 @@
 package cmd
 
+import (
+	sso "github.com/nanih98/aws-sso/aws"
+	"github.com/nanih98/aws-sso/configuration"
+	"github.com/nanih98/gologger"
+	"github.com/nanih98/aws-sso/utils"
+	"github.com/spf13/cobra"
+)
 import "github.com/nanih98/aws-sso/logger"
 
 var (

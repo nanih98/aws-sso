@@ -3,12 +3,13 @@ module github.com/nanih98/aws-sso
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go-v2/service/sso v1.11.9
-	github.com/charmbracelet/bubbles v0.13.0
-	github.com/charmbracelet/bubbletea v0.22.0
-	github.com/charmbracelet/lipgloss v0.5.0
+	github.com/aws/aws-sdk-go-v2 v1.16.11
+	github.com/aws/aws-sdk-go-v2/config v1.16.1
+	github.com/aws/aws-sdk-go-v2/service/sso v1.11.16
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.12.14
+	github.com/nanih98/gologger v0.0.3
 	github.com/pelletier/go-toml/v2 v2.0.2
-	github.com/sirupsen/logrus v1.9.0
+	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/spf13/cobra v1.5.0
 	github.com/stretchr/testify v1.7.2
 )
@@ -45,4 +46,5 @@ require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8
 	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/sys v0.0.0-20210616045830-e2b7044e8c71 // indirect
 )
