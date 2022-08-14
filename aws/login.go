@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/nanih98/aws-sso/logger"
-	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -46,7 +45,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	// load default aws config
 	awsSso.cfg, err = config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		log.Fatal(err)
+		awsSso.log.Fatal(err)
 	}
 
 	awsSso.SetupSsoOidcClient(startURL)
@@ -79,9 +78,9 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 		}
 
 		for _, accountInfo := range listAccountsOutput.AccountList {
-			fmt.Println("-------------------------------------------------------")
-			fmt.Printf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress))
-			fmt.Printf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId))
+			awsSso.log.Info("-------------------------------------------------------")
+			awsSso.log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
+			awsSso.log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
 			// list roles for a given account [ONLY provided for better example coverage]
 			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
 				AccessToken: awsSso.token.AccessToken,
@@ -96,8 +95,8 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 				}
 
 				for _, roleInfo := range listAccountRolesOutput.RoleList {
-					fmt.Printf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName))
-					fmt.Println("Fetching credentials....")
+					awsSso.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
+					awsSso.log.Info("Fetching credentials....")
 					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
 						AccessToken: awsSso.token.AccessToken,
 						AccountId:   roleInfo.AccountId,
@@ -107,7 +106,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 						awsSso.log.Fatal(err)
 					}
 
-					printLoggingStatus(credentials)
+					printLoggingStatus(credentials, awsSso.log)
 					err = configuration.ConfigGenerator(
 						aws.ToString(accountInfo.AccountName),
 						aws.ToString(credentials.RoleCredentials.AccessKeyId),
@@ -142,12 +141,12 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 
 func (a *AWSLogin) TriggerLogin() error {
 	url := aws.ToString(a.deviceAuth.VerificationUriComplete)
-	fmt.Printf("If browser is not opened automatically, please open link:\n%v\n", url)
+	a.log.Info(fmt.Sprintf("If browser is not opened automatically, please open link:\n%v\n", url))
 	err := browser.OpenURL(url)
 	if err != nil {
-		fmt.Println(err)
+		a.log.Fatal(err)
 	}
-	fmt.Println("Press ENTER key once login is done")
+	a.log.Info("Press ENTER key once login is done")
 	_ = bufio.NewScanner(os.Stdin).Scan()
 	return err
 }
@@ -163,7 +162,7 @@ func (a *AWSLogin) SetupSsoOidcClient(startURL string) {
 		Scopes:     []string{"sso-portal:*"},
 	})
 	if err != nil {
-		fmt.Println(err)
+		a.log.Fatal(err)
 	}
 
 	a.register = register
@@ -176,7 +175,7 @@ func (a *AWSLogin) SetupSsoOidcClient(startURL string) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		a.log.Fatal(err)
 	}
 
 	a.deviceAuth = deviceAuth
@@ -197,11 +196,11 @@ func (a *AWSLogin) GenerateToken() error {
 	return nil
 }
 
-func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput) {
-	fmt.Println("Writing file....")
-	fmt.Printf("\n\nPrinting credentials")
-	fmt.Println("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId))
-	fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
-	fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
-	fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
+func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput, customLogger *logger.CustomLogger) {
+	customLogger.Info("Writing file....")
+	customLogger.Info(fmt.Sprintf("\n\nPrinting credentials"))
+	customLogger.Info(fmt.Sprintf("Access key id: %s", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
+	customLogger.Info(fmt.Sprintf("Secret access key: %s", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
+	customLogger.Info(fmt.Sprintf("Expiration: %d", aws.ToInt64(&credentials.RoleCredentials.Expiration)))
+	customLogger.Info(fmt.Sprintf("Session token: %s", aws.ToString(credentials.RoleCredentials.SessionToken)))
 }
