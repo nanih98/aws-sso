@@ -10,10 +10,9 @@ var (
 
 func init() {
 	log := logger.Logger()
-	ssoInit := InitSsoCommand(profileName, startURL, region, &log)
-	start := StartCommand(profileName, &log)
+	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log)
+	start := StartCommand(&profileName, &log)
 
-	//rootCmd.AddCommand(ssoConfig)
 	rootCmd.AddCommand(ssoInit)
 	rootCmd.AddCommand(start)
 
@@ -26,4 +25,5 @@ func init() {
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")
 	ssoInit.MarkPersistentFlagRequired("profileName")
+	//rootCmd.AddCommand(ssoConfig)
 }
