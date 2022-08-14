@@ -10,7 +10,7 @@ import (
 
 func InitSsoCommand(profileName *string, startURL *string, region *string, log *logger.CustomLogger) *cobra.Command {
 	return &cobra.Command{
-		Use:   "init",
+		Use:   "config",
 		Short: "Setup your information regarding to your SSO",
 		Long:  "Setup SSO configuration like SSO Start url, AWS region...",
 		Run: func(cmd *cobra.Command, args []string) {

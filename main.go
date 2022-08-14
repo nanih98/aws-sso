@@ -2,12 +2,11 @@ package main
 
 import (
 	"github.com/nanih98/aws-sso/cmd"
-	//"github.com/pkg/browser"
-	"github.com/nanih98/gologger"
+	"github.com/nanih98/aws-sso/logger"
 )
 
 func main() {
-	log := gologger.New(os.Stdout, "", log.Ldate|log.Ltime)
-	log.Info("Starting aws-sso...")
+	logger := logger.Logger()
+	logger.Info("Starting aws-sso...")
 	cmd.Execute()
 }
