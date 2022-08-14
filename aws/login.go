@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -12,24 +11,24 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/sso"
 	"github.com/aws/aws-sdk-go-v2/service/ssooidc"
 	"github.com/nanih98/aws-sso/configuration"
+	"github.com/nanih98/gologger"
 	"github.com/pkg/browser"
 )
 
 // Login function blablabla
-func Login(startURL string, region string) {
-	log.Println("Starting the program....")
+func Login(log gologger.CustomLogger, startURL string, region string) {
 	os.Setenv("AWS_REGION", region)
 
 	// load default aws config
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	// create sso oidc client to trigger login flow
 	ssooidcClient := ssooidc.NewFromConfig(cfg)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	// register your client which is triggering the login flow
@@ -39,7 +38,7 @@ func Login(startURL string, region string) {
 		Scopes:     []string{"sso-portal:*"},
 	})
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	// authorize your device using the client registration response
@@ -50,17 +49,19 @@ func Login(startURL string, region string) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	// trigger OIDC login. open browser to login. close tab once login is done. press enter to continue
 	url := aws.ToString(deviceAuth.VerificationUriComplete)
-	fmt.Printf("If browser is not opened automatically, please open link:\n%v\n", url)
+
+	log.Info(fmt.Sprintf("If browser is not opened automatically, please open link:\n%v\n", url))
 	err = browser.OpenURL(url)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
-	fmt.Println("Press ENTER key once login is done")
+
+	log.Info("Press ENTER key once login is done")
 	_ = bufio.NewScanner(os.Stdin).Scan()
 
 	// generate sso token
@@ -72,13 +73,13 @@ func Login(startURL string, region string) {
 	})
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	// create sso client
 	ssoClient := sso.NewFromConfig(cfg)
 	// list accounts [ONLY provided for better example coverage]
-	fmt.Println("Fetching list of all accounts for user")
+	log.Info("Fetching list of all accounts for user")
 
 	accountPaginator := sso.NewListAccountsPaginator(ssoClient, &sso.ListAccountsInput{
 		AccessToken: token.AccessToken,
@@ -87,14 +88,13 @@ func Login(startURL string, region string) {
 	for accountPaginator.HasMorePages() {
 		x, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
-			fmt.Println(err)
+			log.Fatal(err)
 		}
 		for _, y := range x.AccountList {
-			fmt.Println("-------------------------------------------------------")
-			fmt.Printf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(y.AccountId), aws.ToString(y.AccountName), aws.ToString(y.EmailAddress))
+			log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(y.AccountId), aws.ToString(y.AccountName), aws.ToString(y.EmailAddress)))
 
 			// list roles for a given account [ONLY provided for better example coverage]
-			fmt.Printf("\n\nFetching roles of account %v for user\n", aws.ToString(y.AccountId))
+			log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(y.AccountId)))
 			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
 				AccessToken: token.AccessToken,
 				AccountId:   y.AccountId,
@@ -104,27 +104,27 @@ func Login(startURL string, region string) {
 				z, err := rolePaginator.NextPage(context.TODO())
 
 				if err != nil {
-					fmt.Println(err)
+					log.Fatal(err)
 				}
 
 				for _, p := range z.RoleList {
-					fmt.Printf("Account ID: %v Role Name: %v\n", aws.ToString(p.AccountId), aws.ToString(p.RoleName))
-					fmt.Println("Fetching credentials....")
+					log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(p.AccountId), aws.ToString(p.RoleName)))
+					log.Info("Fetching credentials....")
 					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
 						AccessToken: token.AccessToken,
 						AccountId:   p.AccountId,
 						RoleName:    p.RoleName,
 					})
 					if err != nil {
-						fmt.Println(err)
+						log.Fatal(err)
 					}
-					fmt.Println("Writing file....")
+					log.Info("Writing file....")
 					configuration.ConfigGenerator(aws.ToString(y.AccountName), aws.ToString(credentials.RoleCredentials.AccessKeyId), aws.ToString(credentials.RoleCredentials.SecretAccessKey), aws.ToString(credentials.RoleCredentials.SessionToken))
-					fmt.Printf("\n\nPrinting credentials")
-					fmt.Println("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId))
-					fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
-					fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
-					fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
+					log.Info("\n\nPrinting credentials")
+					log.Info(fmt.Sprintf("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
+					log.Info(fmt.Sprintf("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
+					log.Info(fmt.Sprintf("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration)))
+					log.Info(fmt.Sprintf("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken)))
 				}
 			}
 		}

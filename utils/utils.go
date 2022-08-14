@@ -1,14 +1,13 @@
 package utils
 
 import (
-	"fmt"
 	"io/ioutil"
 	"os"
 
-	"github.com/nanih98/aws-sso/logger"
+	"github.com/nanih98/gologger"
 )
 
-var log = logger.Logger()
+var log = gologger.Logger()
 
 // WriteConfigFile first initial config file
 func WriteConfigFile(config []byte, profileName string) {
@@ -39,13 +38,13 @@ func UserDirectory() string {
 }
 
 // GetConfigurations is a blablabla
-func GetConfigurations() {
-	files, err := ioutil.ReadDir("/tmp/aws-sso/")
-	if err != nil {
-		log.Fatal(err)
-	}
+// func GetConfigurations() {
+// 	files, err := ioutil.ReadDir("/tmp/aws-sso/")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	for _, file := range files {
-		fmt.Println(file.Name(), file.IsDir())
-	}
-}
+// 	for _, file := range files {
+// 		fmt.Println(file.Name(), file.IsDir())
+// 	}
+// }

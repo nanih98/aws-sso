@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/nanih98/aws-sso/dto"
-	"github.com/nanih98/aws-sso/logger"
+	"github.com/nanih98/gologger"
 )
 
 func checkFileExists(filePath string) bool {
@@ -18,7 +18,7 @@ func checkFileExists(filePath string) bool {
 }
 
 // FileExists checks if blablabluuu
-func FileExists(log logger.CustomLogger, profileName string) string {
+func FileExists(log gologger.CustomLogger, profileName string) string {
 	// lifullconnect-sso.json
 	dirname, err := os.UserHomeDir()
 	if err != nil {
@@ -31,7 +31,7 @@ func FileExists(log logger.CustomLogger, profileName string) string {
 	isFileExist := checkFileExists(configPath)
 
 	if !isFileExist {
-		log.Fatal(fmt.Errorf("Profile don't exists"))
+		log.Fatal(fmt.Errorf("Profile don't exists. Execute aws-sso config"))
 		return ""
 	}
 
@@ -39,7 +39,7 @@ func FileExists(log logger.CustomLogger, profileName string) string {
 	return configPath
 }
 
-func ReadFile(log logger.CustomLogger, filePath string) (string, string) {
+func ReadFile(log gologger.CustomLogger, filePath string) (string, string) {
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)

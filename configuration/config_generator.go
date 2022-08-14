@@ -8,11 +8,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nanih98/aws-sso/logger"
+	"github.com/nanih98/gologger"
 	"github.com/pelletier/go-toml/v2"
 )
 
-var log = logger.Logger()
+var log = gologger.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 var key string = ""
 
@@ -43,9 +43,16 @@ func ConfigGenerator(account string, aws_access_key string, aws_secret_key strin
 		log.Fatal(err)
 	}
 
-	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
-	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	// file := os.Remove(dirname+"/.aws/credentials")
+	// log.Warn("Removing old credentials file in ", dirname+"/.aws/credentials")
+	// if file != nil {
+	//     log.Fatal(file)
+	// }
+
+	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0755)
+	f.Truncate(0)
+	f.Seek(0, 0)
+
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,11 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
-	"github.com/nanih98/aws-sso/logger"
+	"github.com/nanih98/gologger"
 	"github.com/nanih98/aws-sso/utils"
 	"github.com/spf13/cobra"
 )
@@ -16,24 +14,24 @@ var (
 	region      string
 )
 
-var log = logger.Logger()
+var log = gologger.New(os.Stdout, "", log.Ldate|log.Ltime)
 
 func init() {
 	//rootCmd.AddCommand(ssoConfig)
-	rootCmd.AddCommand(ssoInit)
-	rootCmd.AddCommand(start)
-	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	start.MarkPersistentFlagRequired("profileName")
-	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
-	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	ssoInit.MarkPersistentFlagRequired("startURL")
-	ssoInit.MarkPersistentFlagRequired("region")
-	ssoInit.MarkPersistentFlagRequired("profileName")
+	rootCmd.AddCommand(ssoConfig)
+	rootCmd.AddCommand(ssoStart)
+	ssoStart.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	ssoStart.MarkPersistentFlagRequired("profileName")
+	ssoConfig.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
+	ssoConfig.PersistentFlags().StringVar(&region, "region", "", "AWS region")
+	ssoConfig.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	ssoConfig.MarkPersistentFlagRequired("startURL")
+	ssoConfig.MarkPersistentFlagRequired("region")
+	ssoConfig.MarkPersistentFlagRequired("profileName")
 }
 
-var ssoInit = &cobra.Command{
-	Use:   "init",
+var ssoConfig = &cobra.Command{
+	Use:   "config",
 	Short: "Setup your information regarding to your SSO",
 	Long:  "Setup SSO configuration like SSO Start url, AWS region...",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -41,13 +39,13 @@ var ssoInit = &cobra.Command{
 	},
 }
 
-var start = &cobra.Command{
+var ssoStart = &cobra.Command{
 	Use:   "start",
 	Short: "Start the application",
 	Long:  "Start the application",
 	Run: func(cmd *cobra.Command, args []string) {
 		filePath := utils.FileExists(log, profileName)
 		startURL, region := utils.ReadFile(log, filePath)
-		sso.Login(startURL, region)
+		sso.Login(log, startURL, region)
 	},
 }
