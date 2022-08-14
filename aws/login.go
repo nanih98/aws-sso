@@ -15,35 +15,57 @@ import (
 	"github.com/pkg/browser"
 )
 
+type AWSLogin struct {
+	cfg          aws.Config
+	ssoidcClient *ssooidc.Client
+	register     *ssooidc.RegisterClientOutput
+	deviceAuth   *ssooidc.StartDeviceAuthorizationOutput
+	token        *ssooidc.CreateTokenOutput
+	ssoClient    *sso.Client
+}
+
 // Login function blablabla
 func Login(startURL string, region string) {
+	var err error
+	awsLogin := AWSLogin{
+		cfg:          aws.Config{},
+		ssoidcClient: nil,
+		register:     nil,
+		deviceAuth:   nil,
+		token:        nil,
+		ssoClient:    nil,
+	}
+
 	log.Println("Starting the program....")
 	os.Setenv("AWS_REGION", region)
 
 	// load default aws config
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+	awsLogin.cfg, err = config.LoadDefaultConfig(context.TODO())
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	ssooidcClient, register, deviceAuth := setupSsoOidcClient(startURL, cfg, err)
+	awsLogin.SetupSsoOidcClient(startURL)
 
 	// trigger OIDC login. open browser to login. close tab once login is done. press enter to continue
-	err = triggerLogin(deviceAuth, err)
+	err = triggerLogin(awsLogin.deviceAuth, err)
 	if err != nil {
 		panic(err)
 	}
 
 	// generate sso token
-	token := generateToken(err, ssooidcClient, register, deviceAuth)
+	err = awsLogin.GenerateToken()
+	if err != nil {
+		panic(err)
+	}
 
 	// create sso client
-	ssoClient := sso.NewFromConfig(cfg)
+	ssoClient := sso.NewFromConfig(awsLogin.cfg)
 	// list accounts [ONLY provided for better example coverage]
 
 	fmt.Println("Fetching list of all accounts for user")
 	accountPaginator := sso.NewListAccountsPaginator(ssoClient, &sso.ListAccountsInput{
-		AccessToken: token.AccessToken,
+		AccessToken: awsLogin.token.AccessToken,
 	})
 
 	for accountPaginator.HasMorePages() {
@@ -58,7 +80,7 @@ func Login(startURL string, region string) {
 			fmt.Printf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId))
 			// list roles for a given account [ONLY provided for better example coverage]
 			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
-				AccessToken: token.AccessToken,
+				AccessToken: awsLogin.token.AccessToken,
 				AccountId:   accountInfo.AccountId,
 			})
 
@@ -73,7 +95,7 @@ func Login(startURL string, region string) {
 					fmt.Printf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName))
 					fmt.Println("Fetching credentials....")
 					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
-						AccessToken: token.AccessToken,
+						AccessToken: awsLogin.token.AccessToken,
 						AccountId:   roleInfo.AccountId,
 						RoleName:    roleInfo.RoleName,
 					})
@@ -123,15 +145,12 @@ func triggerLogin(deviceAuth *ssooidc.StartDeviceAuthorizationOutput, err error)
 	return err
 }
 
-func setupSsoOidcClient(startURL string, cfg aws.Config, err error) (*ssooidc.Client, *ssooidc.RegisterClientOutput, *ssooidc.StartDeviceAuthorizationOutput) {
+func (a *AWSLogin) SetupSsoOidcClient(startURL string) {
 	// create sso oidc client to trigger login flow
-	ssooidcClient := ssooidc.NewFromConfig(cfg)
-	if err != nil {
-		fmt.Println(err)
-	}
+	a.ssoidcClient = ssooidc.NewFromConfig(a.cfg)
 
 	// register your client which is triggering the login flow
-	register, err := ssooidcClient.RegisterClient(context.TODO(), &ssooidc.RegisterClientInput{
+	register, err := a.ssoidcClient.RegisterClient(context.TODO(), &ssooidc.RegisterClientInput{
 		ClientName: aws.String("aws-sso"),
 		ClientType: aws.String("public"),
 		Scopes:     []string{"sso-portal:*"},
@@ -140,8 +159,10 @@ func setupSsoOidcClient(startURL string, cfg aws.Config, err error) (*ssooidc.Cl
 		fmt.Println(err)
 	}
 
+	a.register = register
+
 	// authorize your device using the client registration response
-	deviceAuth, err := ssooidcClient.StartDeviceAuthorization(context.TODO(), &ssooidc.StartDeviceAuthorizationInput{
+	deviceAuth, err := a.ssoidcClient.StartDeviceAuthorization(context.TODO(), &ssooidc.StartDeviceAuthorizationInput{
 		ClientId:     register.ClientId,
 		ClientSecret: register.ClientSecret,
 		StartUrl:     aws.String(startURL),
@@ -150,7 +171,23 @@ func setupSsoOidcClient(startURL string, cfg aws.Config, err error) (*ssooidc.Cl
 	if err != nil {
 		fmt.Println(err)
 	}
-	return ssooidcClient, register, deviceAuth
+
+	a.deviceAuth = deviceAuth
+}
+
+func (a *AWSLogin) GenerateToken() error {
+	token, err := a.ssoidcClient.CreateToken(context.TODO(), &ssooidc.CreateTokenInput{
+		ClientId:     a.register.ClientId,
+		ClientSecret: a.register.ClientSecret,
+		DeviceCode:   a.deviceAuth.DeviceCode,
+		GrantType:    aws.String("urn:ietf:params:oauth:grant-type:device_code"),
+	})
+	if err != nil {
+		return err
+	}
+
+	a.token = token
+	return nil
 }
 
 func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput) {
@@ -160,18 +197,4 @@ func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput) {
 	fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
 	fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
 	fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
-}
-
-func generateToken(err error, ssooidcClient *ssooidc.Client, register *ssooidc.RegisterClientOutput, deviceAuth *ssooidc.StartDeviceAuthorizationOutput) *ssooidc.CreateTokenOutput {
-	token, err := ssooidcClient.CreateToken(context.TODO(), &ssooidc.CreateTokenInput{
-		ClientId:     register.ClientId,
-		ClientSecret: register.ClientSecret,
-		DeviceCode:   deviceAuth.DeviceCode,
-		GrantType:    aws.String("urn:ietf:params:oauth:grant-type:device_code"),
-	})
-
-	if err != nil {
-		fmt.Println(err)
-	}
-	return token
 }
