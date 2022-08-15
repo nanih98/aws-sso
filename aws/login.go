@@ -41,14 +41,10 @@ func NewLogin(log *logger.CustomLogger) *AWSLogin {
 // Login function blablabla
 func Login(startURL string, region string, awsSso *AWSLogin) {
 	var err error
-	awsSso.log.Info("Starting the program....")
 	os.Setenv("AWS_REGION", region)
+	awsSso.log.Info("Starting the program....")
 	// load default aws config
-	awsSso.cfg, err = config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		awsSso.log.Fatal(err)
-	}
-
+	awsSso.GetAWSConfig()
 	awsSso.SetupSsoOidcClient(startURL)
 
 	// trigger OIDC login. open browser to login. close tab once login is done. press enter to continue
@@ -109,6 +105,14 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	// fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
 	// fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
 	// fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
+}
+
+func (a *AWSLogin) GetAWSConfig() {
+	cfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		a.log.Fatal(err)
+	}
+	a.cfg = cfg
 }
 
 func (a *AWSLogin) GetRolePaginator(accountInfo types.AccountInfo) *sso.ListAccountRolesPaginator {
