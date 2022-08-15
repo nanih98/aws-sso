@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"github.com/nanih98/aws-sso/dto"
 	"github.com/stretchr/testify/assert"
 	"os"
 	"testing"
@@ -8,7 +9,7 @@ import (
 
 func TestWriteProfileToFile(t *testing.T) {
 	type args struct {
-		profile  Profile
+		profile  dto.Profile
 		filepath string
 	}
 	tests := []struct {
@@ -18,8 +19,8 @@ func TestWriteProfileToFile(t *testing.T) {
 		{
 			name: "Test WriteProfileToFile should create a non existing file",
 			args: args{
-				profile: Profile{
-					Creds: Credentials{
+				profile: dto.Profile{
+					Creds: dto.Credentials{
 						Region:             "eu-west-1",
 						AWSAccessKey:       "accessKeyTest",
 						AWSSecretAccessKey: "secretAccessKeyTest",
@@ -33,8 +34,7 @@ func TestWriteProfileToFile(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			os.Mkdir("/tmp/.aws", os.ModePerm)
-			WriteProfileToFile(tt.args.profile, "/tmp")
-			_, err := os.Stat(tt.args.filepath)
+			err := WriteProfileToFile(tt.args.profile, "/tmp")
 			assert.NoError(t, err)
 			os.Remove(tt.args.filepath)
 		})

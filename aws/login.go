@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/sso/types"
 	"github.com/nanih98/aws-sso/logger"
 	"os"
 
@@ -78,44 +79,15 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 		}
 
 		for _, accountInfo := range listAccountsOutput.AccountList {
-			awsSso.log.Info("-------------------------------------------------------")
-			awsSso.log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
-			awsSso.log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
-			// list roles for a given account [ONLY provided for better example coverage]
-			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
-				AccessToken: awsSso.token.AccessToken,
-				AccountId:   accountInfo.AccountId,
-			})
+			rolePaginator := awsSso.GetRolePaginator(accountInfo)
 
 			for rolePaginator.HasMorePages() {
 				listAccountRolesOutput, err := rolePaginator.NextPage(context.TODO())
-
 				if err != nil {
 					awsSso.log.Fatal(err)
 				}
 
-				for _, roleInfo := range listAccountRolesOutput.RoleList {
-					awsSso.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
-					awsSso.log.Info("Fetching credentials....")
-					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
-						AccessToken: awsSso.token.AccessToken,
-						AccountId:   roleInfo.AccountId,
-						RoleName:    roleInfo.RoleName,
-					})
-					if err != nil {
-						awsSso.log.Fatal(err)
-					}
-
-					printLoggingStatus(credentials, awsSso.log)
-					err = configuration.ConfigGenerator(
-						aws.ToString(accountInfo.AccountName),
-						aws.ToString(credentials.RoleCredentials.AccessKeyId),
-						aws.ToString(credentials.RoleCredentials.SecretAccessKey),
-						aws.ToString(credentials.RoleCredentials.SessionToken))
-					if err != nil {
-						awsSso.log.Fatal(err)
-					}
-				}
+				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
 			}
 		}
 	}
@@ -137,6 +109,44 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	// fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
 	// fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
 	// fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
+}
+
+func (a *AWSLogin) GetRolePaginator(accountInfo types.AccountInfo) *sso.ListAccountRolesPaginator {
+	a.log.Info("-------------------------------------------------------")
+	a.log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
+	a.log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
+
+	// list roles for a given account [ONLY provided for better example coverage]
+	rolePaginator := sso.NewListAccountRolesPaginator(a.ssoClient, &sso.ListAccountRolesInput{
+		AccessToken: a.token.AccessToken,
+		AccountId:   accountInfo.AccountId,
+	})
+	return rolePaginator
+}
+
+func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
+	for _, roleInfo := range listAccountRolesOutput.RoleList {
+		a.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
+		a.log.Info("Fetching credentials....")
+		credentials, err := a.ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
+			AccessToken: a.token.AccessToken,
+			AccountId:   roleInfo.AccountId,
+			RoleName:    roleInfo.RoleName,
+		})
+		if err != nil {
+			a.log.Fatal(err)
+		}
+
+		printLoggingStatus(credentials, a.log)
+		err = configuration.ConfigGenerator(
+			aws.ToString(accountInfo.AccountName),
+			aws.ToString(credentials.RoleCredentials.AccessKeyId),
+			aws.ToString(credentials.RoleCredentials.SecretAccessKey),
+			aws.ToString(credentials.RoleCredentials.SessionToken))
+		if err != nil {
+			a.log.Fatal(err)
+		}
+	}
 }
 
 func (a *AWSLogin) TriggerLogin() error {
