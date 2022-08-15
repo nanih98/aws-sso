@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/nanih98/aws-sso/utils"
 	"io"
 	"os"
 	"strings"
@@ -46,10 +45,16 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		},
 	}
 
-	err := WriteProfileToFile(resp, utils.GetHomeDir())
+	dirname, err := os.UserHomeDir()
 	if err != nil {
 		return err
 	}
+
+	err = WriteProfileToFile(resp, dirname)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

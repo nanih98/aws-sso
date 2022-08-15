@@ -21,7 +21,12 @@ func checkFileExists(filePath string) bool {
 func FileExists(log *logger.CustomLogger, profileName string) string {
 	// lifullconnect-sso.json
 	filePath := profileName + ".json"
-	configPath := GetHomeDir() + "/.aws-sso/" + filePath
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+	configPath := dirname + "/.aws-sso/" + filePath
 	fileExist := checkFileExists(configPath)
 
 	if !fileExist {

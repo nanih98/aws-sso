@@ -22,7 +22,12 @@ func WriteConfigFile(config []byte, profileName string, log *logger.CustomLogger
 
 // UserDirectory is a function to check if the directory to store the config exists
 func UserDirectory(log *logger.CustomLogger) (string, error) {
-	configPath := GetHomeDir(log) + "/.aws-sso/"
+	dirname, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	configPath := dirname + "/.aws-sso/"
 	if err := dirExists(configPath, log); err != nil {
 		return "", fmt.Errorf("could not create the directory: %v", err)
 	}
@@ -51,11 +56,3 @@ func dirExists(configPath string, log *logger.CustomLogger) error {
 //		fmt.Println(file.Name(), file.IsDir())
 //	}
 //}
-
-func GetHomeDir(logger *logger.CustomLogger) string {
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		logger.Fatal(err)
-	}
-	return dirname
-}
