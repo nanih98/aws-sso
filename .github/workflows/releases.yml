@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - 'tgtg' # to avoid pipelines by the moment
+      - '*' # to avoid pipelines by the moment
 
 permissions:
   contents: write
