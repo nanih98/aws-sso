@@ -2,6 +2,7 @@ package configuration
 
 import (
 	"encoding/json"
+
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"

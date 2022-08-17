@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -23,13 +22,16 @@ func (c *CustomLogger) Fatal(msg error) {
 	c.Log.Fatal(msg)
 }
 
-func (c *CustomLogger) LogLevel(level *string) {
-	switch *level {
+func (c *CustomLogger) Debug(msg string) {
+	c.Log.Debug(msg)
+}
+
+func (c *CustomLogger) LogLevel(level string) {
+	switch level {
 	case "debug":
-		c.Log.Level = logrus.DebugLevel
-	default:
-		c.Log.Level = logrus.InfoLevel
-		fmt.Printf("Level default INFO")
+		c.Log.Logger.SetLevel(logrus.DebugLevel)
+	case "info":
+		c.Log.Logger.SetLevel(logrus.InfoLevel)
 	}
 }
 

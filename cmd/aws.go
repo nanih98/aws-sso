@@ -1,27 +1,29 @@
 package cmd
 
-import "github.com/nanih98/aws-sso/logger"
+import (
+	"github.com/nanih98/aws-sso/logger"
+)
 
 var (
 	profileName string
 	startURL    string
 	region      string
-	logLevel	string
+	level       string
 )
 
 func init() {
 	log := logger.Logger()
 
-	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log)
-	start := StartCommand(&profileName, &log)
+	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log, &level)
+	start := StartCommand(&profileName, &log, &level)
 
 	rootCmd.AddCommand(ssoInit)
 	rootCmd.AddCommand(start)
 
 	//Debug
-	ssoInit.MarkPersistentFlagRequired("logLevel")
-	ssoInit.PersistentFlags().StringVar(&logLevel, "logLevel", "info", "Setup AWS SSO start URL")
-	log.LogLevel(&logLevel)
+	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
+	start.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
+	//ssoInit.MarkPersistentFlagRequired("level")
 
 	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
 	start.MarkPersistentFlagRequired("profileName")

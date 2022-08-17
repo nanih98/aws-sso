@@ -30,7 +30,6 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 
 # TO DO
 
-- Pasarle el flag -l level debug
 - Multithread en las llamadas a los profiles
 - El fichero .aws/credentials debe soportar varios profiles de credenciales
 - Crear solución nativa de la herramienta para filtrar .aws/credentials y setear el profile que necesitas, reemplazando lo siguiente:
