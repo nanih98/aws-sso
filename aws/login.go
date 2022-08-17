@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/aws/aws-sdk-go-v2/service/sso/types"
 	"github.com/nanih98/aws-sso/logger"
-	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -29,11 +30,11 @@ type AWSLogin struct {
 func NewLogin(log *logger.CustomLogger) *AWSLogin {
 	return &AWSLogin{
 		cfg:           aws.Config{},
-		ssooidcClient: nil,
-		register:      nil,
-		deviceAuth:    nil,
-		token:         nil,
-		ssoClient:     nil,
+		ssooidcClient: &ssooidc.Client{},
+		register:      &ssooidc.RegisterClientOutput{},
+		deviceAuth:    &ssooidc.StartDeviceAuthorizationOutput{},
+		token:         &ssooidc.CreateTokenOutput{},
+		ssoClient:     &sso.Client{},
 		log:           log,
 	}
 }
@@ -73,17 +74,42 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 		if err != nil {
 			awsSso.log.Fatal(err)
 		}
-
 		for _, accountInfo := range listAccountsOutput.AccountList {
-			rolePaginator := awsSso.GetRolePaginator(accountInfo)
+			awsSso.log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
+
+			// list roles for a given account [ONLY provided for better example coverage]
+			awsSso.log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
+			rolePaginator := sso.NewListAccountRolesPaginator(ssoClient, &sso.ListAccountRolesInput{
+				AccessToken: awsSso.token.AccessToken,
+				AccountId:   accountInfo.AccountId,
+			})
 
 			for rolePaginator.HasMorePages() {
 				listAccountRolesOutput, err := rolePaginator.NextPage(context.TODO())
+
 				if err != nil {
 					awsSso.log.Fatal(err)
 				}
 
-				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				for _, roleInfo := range listAccountRolesOutput.RoleList {
+					awsSso.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
+					awsSso.log.Info("Fetching credentials....")
+					credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
+						AccessToken: awsSso.token.AccessToken,
+						AccountId:   roleInfo.AccountId,
+						RoleName:    roleInfo.RoleName,
+					})
+					if err != nil {
+						awsSso.log.Fatal(err)
+					}
+					awsSso.log.Info("Writing file....")
+					configuration.ConfigGenerator(aws.ToString(accountInfo.AccountName), aws.ToString(credentials.RoleCredentials.AccessKeyId), aws.ToString(credentials.RoleCredentials.SecretAccessKey), aws.ToString(credentials.RoleCredentials.SessionToken))
+					awsSso.log.Info("\n\nPrinting credentials")
+					awsSso.log.Info(fmt.Sprintf("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
+					awsSso.log.Info(fmt.Sprintf("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
+					awsSso.log.Info(fmt.Sprintf("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration)))
+					awsSso.log.Info(fmt.Sprintf("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken)))
+				}
 			}
 		}
 	}

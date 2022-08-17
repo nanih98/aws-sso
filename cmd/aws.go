@@ -25,5 +25,4 @@ func init() {
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")
 	ssoInit.MarkPersistentFlagRequired("profileName")
-	//rootCmd.AddCommand(ssoConfig)
 }
