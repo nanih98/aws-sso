@@ -20,18 +20,33 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [TO DO](#to-do)
 - [Credits](#credits)
-  - [Contributors](#contributors)
+- [Contributors](#contributors)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
+# TO DO
+
+- Pasarle el flag -l level debug
+- Multithread en las llamadas a los profiles
+- El fichero .aws/credentials debe soportar varios profiles de credenciales
+- Crear solución nativa de la herramienta para filtrar .aws/credentials y setear el profile que necesitas, reemplazando lo siguiente:
+
+```bash
+aws-profile () {
+ PROFILE=$(cat ~/.aws/credentials|grep "^\["|sed "s/]$//"|sed "s/^\[//"| fzf)
+ export AWS_PROFILE=$PROFILE
+}
+```
 # Credits 
 
 - [Github issue](https://github.com/aws/aws-sdk-go-v2/issues/1222)
+- [Cobra](https://github.com/spf13/cobra)
 
-## Contributors
+# Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/nanih98/aws-sso/graphs/contributors"><img src="https://opencollective.com/aws-sso/contributors.svg?width=890" /></a>
