@@ -116,6 +116,7 @@ func GetProfiles(filter, filepath string) []string {
 }
 
 func Profile(log *logger.CustomLogger, filter string) {
+	log.Info("Setting your AWS_PROFILE environment variable...")
 	log.Info("Reading file .aws/credentials")
 	log.Info(fmt.Sprintf("Serching credentials for profile name %s", filter))
 
