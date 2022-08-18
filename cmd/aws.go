@@ -1,51 +1,40 @@
 package cmd
 
 import (
-	sso "github.com/nanih98/aws-sso/aws"
-	"github.com/nanih98/aws-sso/configuration"
-	"github.com/nanih98/gologger"
-	"github.com/nanih98/aws-sso/utils"
-	"github.com/spf13/cobra"
+	"github.com/nanih98/aws-sso/logger"
 )
 
 var (
 	profileName string
 	startURL    string
 	region      string
+	level       string
+	filter 		string
 )
 
-var log = gologger.New(os.Stdout, "", log.Ldate|log.Ltime)
-
 func init() {
-	//rootCmd.AddCommand(ssoConfig)
-	rootCmd.AddCommand(ssoConfig)
-	rootCmd.AddCommand(ssoStart)
-	ssoStart.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	ssoStart.MarkPersistentFlagRequired("profileName")
-	ssoConfig.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoConfig.PersistentFlags().StringVar(&region, "region", "", "AWS region")
-	ssoConfig.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	ssoConfig.MarkPersistentFlagRequired("startURL")
-	ssoConfig.MarkPersistentFlagRequired("region")
-	ssoConfig.MarkPersistentFlagRequired("profileName")
-}
+	log := logger.Logger()
 
-var ssoConfig = &cobra.Command{
-	Use:   "config",
-	Short: "Setup your information regarding to your SSO",
-	Long:  "Setup SSO configuration like SSO Start url, AWS region...",
-	Run: func(cmd *cobra.Command, args []string) {
-		configuration.GetSSOConfig(log, profileName, startURL, region)
-	},
-}
+	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log, &level)
+	start := StartCommand(&profileName, &log, &level)
+	profile := SetProfile(&log, &level, &filter)
 
-var ssoStart = &cobra.Command{
-	Use:   "start",
-	Short: "Start the application",
-	Long:  "Start the application",
-	Run: func(cmd *cobra.Command, args []string) {
-		filePath := utils.FileExists(log, profileName)
-		startURL, region := utils.ReadFile(log, filePath)
-		sso.Login(log, startURL, region)
-	},
+	rootCmd.AddCommand(ssoInit)
+	rootCmd.AddCommand(start)
+	rootCmd.AddCommand(profile)
+
+	//Debug
+	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
+	start.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
+
+	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	start.MarkPersistentFlagRequired("profileName")
+
+	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
+	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
+	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	ssoInit.MarkPersistentFlagRequired("startURL")
+	ssoInit.MarkPersistentFlagRequired("region")
+
+	profile.PersistentFlags().StringVar(&filter, "filter", "", "Filter the profilename inside .aws/credentials file")
 }

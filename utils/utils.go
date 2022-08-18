@@ -1,17 +1,19 @@
 package utils
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 
-	"github.com/nanih98/gologger"
+	"github.com/nanih98/aws-sso/logger"
 )
 
-var log = gologger.Logger()
-
 // WriteConfigFile first initial config file
-func WriteConfigFile(config []byte, profileName string) {
-	directory := UserDirectory()
+func WriteConfigFile(config []byte, profileName string, log *logger.CustomLogger) {
+	directory, err := UserDirectory(log)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fileName := directory + profileName + ".json"
 	log.Info("Saving profile configuration for " + profileName)
 	_ = ioutil.WriteFile(fileName, config, 0644)
@@ -19,32 +21,46 @@ func WriteConfigFile(config []byte, profileName string) {
 }
 
 // UserDirectory is a function to check if the directory to store the config exists
-func UserDirectory() string {
+func UserDirectory(log *logger.CustomLogger) (string, error) {
+	dirname := GetUserHome(log)
+
+	configPath := dirname + "/.aws-sso/"
+	if err := dirExists(configPath, log); err != nil {
+		return "", fmt.Errorf("could not create the directory: %v", err)
+	}
+	return configPath, nil
+}
+
+// getUserHome return the home of the user. Example: /Users/myuser or /home/myuser
+func GetUserHome(log *logger.CustomLogger) string {
 	dirname, err := os.UserHomeDir()
+
 	if err != nil {
 		log.Fatal(err)
 	}
-	configPath := dirname + "/.aws-sso/"
+
+	return dirname
+}
+
+func dirExists(configPath string, log *logger.CustomLogger) error {
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		log.Warn("Directory " + configPath + " don't exists. Creating a new one...")
 		err = os.Mkdir(configPath, 0700)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-	} else {
-		log.Info("Directory " + configPath + " exists")
 	}
-	return configPath
+	return nil
 }
 
 // GetConfigurations is a blablabla
-// func GetConfigurations() {
-// 	files, err := ioutil.ReadDir("/tmp/aws-sso/")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	for _, file := range files {
-// 		fmt.Println(file.Name(), file.IsDir())
-// 	}
-// }
+//func GetConfigurations() {
+//	files, err := ioutil.ReadDir("/tmp/aws-sso/")
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	for _, file := range files {
+//		fmt.Println(file.Name(), file.IsDir())
+//	}
+//}

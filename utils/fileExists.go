@@ -8,30 +8,29 @@ import (
 	"os"
 
 	"github.com/nanih98/aws-sso/dto"
-	"github.com/nanih98/gologger"
+	"github.com/nanih98/aws-sso/logger"
 )
 
 func checkFileExists(filePath string) bool {
-	_, error := os.Stat(filePath)
+	_, err := os.Stat(filePath)
 	//return !os.IsNotExist(err)
-	return !errors.Is(error, os.ErrNotExist)
+	return !errors.Is(err, os.ErrNotExist)
 }
 
 // FileExists checks if blablabluuu
-func FileExists(log gologger.CustomLogger, profileName string) string {
+func FileExists(log *logger.CustomLogger, profileName string) string {
 	// lifullconnect-sso.json
+	filePath := profileName + ".json"
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
+		return ""
 	}
-	filePath := profileName + ".json"
-
 	configPath := dirname + "/.aws-sso/" + filePath
+	fileExist := checkFileExists(configPath)
 
-	isFileExist := checkFileExists(configPath)
-
-	if !isFileExist {
-		log.Fatal(fmt.Errorf("Profile don't exists. Execute aws-sso config"))
+	if !fileExist {
+		log.Fatal(fmt.Errorf("profile don't exists"))
 		return ""
 	}
 
@@ -39,16 +38,16 @@ func FileExists(log gologger.CustomLogger, profileName string) string {
 	return configPath
 }
 
-func ReadFile(log gologger.CustomLogger, filePath string) (string, string) {
+func ReadFile(log *logger.CustomLogger, filePath string) (string, string) {
+	var data dto.Configuration
+
 	content, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Now let's unmarshall the data into `payload`
-	var data dto.Configuration
 	err = json.Unmarshal(content, &data)
-
 	if err != nil {
 		log.Fatal(err)
 	}

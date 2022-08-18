@@ -2,15 +2,14 @@ package configuration
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/nanih98/aws-sso/dto"
+	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
-	"github.com/nanih98/gologger"
 )
 
 // GetSSOConfig get the user input data
-func GetSSOConfig(log gologger.CustomLogger, profileName string, startURL string, region string) {
+func GetSSOConfig(log *logger.CustomLogger, profileName string, startURL string, region string) {
 	log.Info("Setting up configuration...")
 
 	config := dto.Configuration{
@@ -22,8 +21,8 @@ func GetSSOConfig(log gologger.CustomLogger, profileName string, startURL string
 	resp, err := json.MarshalIndent(config, "", " ")
 
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
-	utils.WriteConfigFile(resp, profileName)
+	utils.WriteConfigFile(resp, profileName, log)
 }
