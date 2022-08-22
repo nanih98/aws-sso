@@ -29,7 +29,7 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		return err
 	}
 
-	_, err := os.Stat(dirname)
+	_, err = os.Stat(dirname)
 	if err != nil {
 		err = WriteProfileToFile(resp, dirname)
 		if err != nil {
