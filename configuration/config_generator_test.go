@@ -21,6 +21,7 @@ func TestWriteProfileToFile(t *testing.T) {
 			name: "Test WriteProfileToFile should create a non existing file",
 			args: args{
 				profile: dto.Profile{
+					Key: "sandbox-lifullconnect",
 					Creds: dto.Credentials{
 						Region:             "eu-west-1",
 						AWSAccessKey:       "accessKeyTest",
@@ -86,6 +87,50 @@ region = eu-west-1`,
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			err = ReplaceProfileInFile(tt.args.filename, tt.args.profileName, tt.args.profile)
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestWriteProfilesToFile(t *testing.T) {
+	type args struct {
+		profiles []dto.Profile
+		dirname  string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "Test for write multiple profiles",
+			args: args{
+				profiles: []dto.Profile{
+					{
+						Key: "sandbox-lifull",
+						Creds: dto.Credentials{
+							Region:             "eu-west-1",
+							AWSAccessKey:       "acceskeyfake",
+							AWSSecretAccessKey: "secretkeyfake",
+							AWSSessionToken:    "sessiontokenfake",
+						},
+					},
+					{
+						Key: "sandbox-lifull2",
+						Creds: dto.Credentials{
+							Region:             "eu-west-2",
+							AWSAccessKey:       "acceskeyfake2",
+							AWSSecretAccessKey: "secretkeyfake2",
+							AWSSessionToken:    "sessiontokenfake2",
+						},
+					},
+				},
+				dirname: "/tmp/.aws/credentials",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WriteProfilesToFile(tt.args.profiles, tt.args.dirname)
 			assert.NoError(t, err)
 		})
 	}

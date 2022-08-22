@@ -13,9 +13,10 @@ import (
 	"github.com/pelletier/go-toml/v2"
 )
 
-func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) error {
+func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) (dto.Profile, error) {
 	dto.Key = account
 	resp := dto.Profile{
+		Key: account,
 		Creds: dto.Credentials{
 			Region:             "eu-west-1",
 			AWSAccessKey:       awsAccessKey,
@@ -23,23 +24,24 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 			AWSSessionToken:    awsSessionToken,
 		},
 	}
+	return resp, nil
 
-	dirname, err := os.UserHomeDir()
-	if err != nil {
-		return err
-	}
+	//dirname, err := os.UserHomeDir()
+	//if err != nil {
+	//	return err
+	//}
+	//
+	//err = WriteProfileToFile(resp, dirname)
+	//if err != nil {
+	//	return err
+	//}
+	//_, err = os.Stat(dirname + "/.aws/credentials")
+	//if err != nil {
+	//} else {
+	//	ReplaceProfileInFile(dirname+"/.aws/credentials", account, resp)
+	//}
 
-	_, err = os.Stat(dirname + "/.aws/credentials")
-	if err != nil {
-		err = WriteProfileToFile(resp, dirname)
-		if err != nil {
-			return err
-		}
-	} else {
-		ReplaceProfileInFile(dirname+"/.aws/credentials", account, resp)
-	}
-
-	return nil
+	return
 }
 
 func WriteProfileToFile(profile dto.Profile, dirname string) error {
@@ -57,6 +59,24 @@ func WriteProfileToFile(profile dto.Profile, dirname string) error {
 	convert(strings.NewReader(string(data)), b)
 	fmt.Printf(b.String())
 	f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+	return nil
+}
+
+func WriteProfilesToFile(profiles []dto.Profile, dirname string) error {
+	f, err := os.OpenFile(dirname, os.O_APPEND|os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		return err
+	}
+
+	defer f.Close()
+
+	for i, _ := range profiles {
+		data, _ := json.Marshal(profiles[i])
+		b := new(bytes.Buffer)
+		convert(strings.NewReader(string(data)), b)
+		fmt.Printf(b.String())
+		f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+	}
 	return nil
 }
 

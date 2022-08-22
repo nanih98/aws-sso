@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/nanih98/aws-sso/dto"
+	"github.com/nanih98/aws-sso/utils"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -24,6 +26,7 @@ type AWSLogin struct {
 	token         *ssooidc.CreateTokenOutput
 	ssoClient     *sso.Client
 	log           *logger.CustomLogger
+	profiles      []dto.Profile
 }
 
 func NewLogin(log *logger.CustomLogger) *AWSLogin {
@@ -35,6 +38,7 @@ func NewLogin(log *logger.CustomLogger) *AWSLogin {
 		token:         &ssooidc.CreateTokenOutput{},
 		ssoClient:     &sso.Client{},
 		log:           log,
+		profiles:      []dto.Profile{},
 	}
 }
 
@@ -79,6 +83,8 @@ func Login(startURL string, region string, profileName string, awsSso *AWSLogin)
 			}
 		}
 	}
+
+	configuration.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
 	// fmt.Println("-------------------------------------------------------")
 	// // exchange token received during oidc flow to fetch actual aws access keys
 	// fmt.Printf("\n\nFetching credentails for role %v of account %v for user\n", roleName, accountID)
@@ -127,7 +133,7 @@ func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountR
 			a.log.Fatal(err)
 		}
 		printLoggingStatus(credentials, a.log)
-		err = configuration.ConfigGenerator(
+		profile, err := configuration.ConfigGenerator(
 			fmt.Sprintf("%s-%s", aws.ToString(accountInfo.AccountName), profileName),
 			aws.ToString(credentials.RoleCredentials.AccessKeyId),
 			aws.ToString(credentials.RoleCredentials.SecretAccessKey),
@@ -135,6 +141,7 @@ func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountR
 		if err != nil {
 			a.log.Fatal(err)
 		}
+		a.profiles = append(a.profiles, profile)
 	}
 }
 func (a *AWSLogin) TriggerLogin() error {
