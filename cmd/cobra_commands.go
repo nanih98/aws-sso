@@ -1,12 +1,16 @@
 package cmd
 
 import (
+	"fmt"
+
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
 	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
 	"github.com/spf13/cobra"
 )
+
+var version string
 
 func InitSsoCommand(profileName *string, startURL *string, region *string, log *logger.CustomLogger, level *string) *cobra.Command {
 	return &cobra.Command{
@@ -42,6 +46,17 @@ func SetProfile(log *logger.CustomLogger, level *string, filter *string) *cobra.
 		Run: func(cmd *cobra.Command, args []string) {
 			log.LogLevel(*level)
 			sso.Profile(log, *filter)
+		},
+	}
+}
+
+func GetCLIVersion() *cobra.Command {
+	return &cobra.Command{
+		Use:   "version",
+		Short: "aws-sso version you are using",
+		Long:  "Get the cli aws-sso version",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(version)
 		},
 	}
 }
