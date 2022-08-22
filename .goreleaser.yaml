@@ -35,6 +35,31 @@ changelog:
       - '^docs:'
       - '^test:'
 
+brews:
+  - # GitHub/GitLab repository to push the formula to
+    tap:
+      owner: nanih98
+      name: aws-sso
+
+    name: aws-sso
+    # Template for the url which is determined by the given Token (github or gitlab)
+    # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://github.com/naih98/aws-sso/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+
+    homepage: https://github.com/nanih98/aws-sso
+
+    # Git author used to commit to the repository.
+    commit_author:
+      name: goreleaserbot
+      email: bot@goreleaser.com
+
+    folder: Formula
+
+    description: ""
+
+    # SPDX identifier of your app's license.
+    license: "Apache 2.0 license"
+
 
 # before:
 #   hooks:

@@ -107,8 +107,8 @@ func GetProfiles(filter, filepath string) []string {
 		fmt.Println(err)
 	}
 
-	data := regexp.MustCompile(`\w+-` + filter)
-	//data := regexp.MustCompile(`\[([^\[\]]*)\]`) // prints content inside brackets, without filtering
+	//data := regexp.MustCompile(`\w+-` + filter)
+	data := regexp.MustCompile(`\[([^\[\]]*)\]`) // prints content inside brackets, without filtering
 
 	profiles := data.FindAllString(string(b), -1)
 
