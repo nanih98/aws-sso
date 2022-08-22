@@ -36,7 +36,7 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 			return err
 		}
 	} else {
-		ReplaceProfileInFile(dirname, account, resp)
+		ReplaceProfileInFile(dirname+"/.aws/credentials", account, resp)
 	}
 
 	return nil
