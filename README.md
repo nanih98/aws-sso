@@ -20,12 +20,23 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [Installation](#installation)
+  - [Using go](#using-go)
 - [TO DO](#to-do)
 - [Credits](#credits)
 - [Contributors](#contributors)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Installation
+
+## Using go
+
+```bash
+$ go install github.com/nanih98/aws-sso
+```
+
 
 
 # TO DO
@@ -47,9 +58,7 @@ aws-profile () {
 
 # Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/nanih98/aws-sso/graphs/contributors"><img src="https://opencollective.com/aws-sso/contributors.svg?width=890" /></a>
-
 
 # License
 
