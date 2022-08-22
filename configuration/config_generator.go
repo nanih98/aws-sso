@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/nanih98/aws-sso/dto"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 
@@ -28,6 +29,7 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		return err
 	}
 
+	ReplaceProfileInFile(dirname, account, resp)
 	err = WriteProfileToFile(resp, dirname)
 	if err != nil {
 		return err
@@ -65,4 +67,28 @@ func convert(r io.Reader, w io.Writer) error {
 
 	e := toml.NewEncoder(w)
 	return e.Encode(v)
+}
+
+func ReplaceProfileInFile(filename, profileName string, profile dto.Profile) error {
+	input, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+
+	lines := strings.Split(string(input), "\n")
+
+	for i, line := range lines {
+		if strings.Contains(line, profileName) {
+			lines[i] = fmt.Sprintf("[%s]", profileName)
+			lines[i+1] = fmt.Sprintf("aws_access_key_id = %s", profile.Creds.AWSAccessKey)
+			lines[i+2] = fmt.Sprintf("aws_secret_access_key = %s", profile.Creds.AWSSecretAccessKey)
+			lines[i+3] = fmt.Sprintf("region = %s", profile.Creds.Region)
+		}
+	}
+	output := strings.Join(lines, "\n")
+	err = ioutil.WriteFile(filename, []byte(output), 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }

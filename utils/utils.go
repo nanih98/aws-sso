@@ -2,10 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"github.com/nanih98/aws-sso/logger"
 	"io/ioutil"
 	"os"
-
-	"github.com/nanih98/aws-sso/logger"
 )
 
 // WriteConfigFile first initial config file
