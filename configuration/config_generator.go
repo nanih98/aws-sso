@@ -29,10 +29,14 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		return err
 	}
 
-	ReplaceProfileInFile(dirname, account, resp)
-	err = WriteProfileToFile(resp, dirname)
+	_, err := os.Stat(dirname)
 	if err != nil {
-		return err
+		err = WriteProfileToFile(resp, dirname)
+		if err != nil {
+			return err
+		}
+	} else {
+		ReplaceProfileInFile(dirname, account, resp)
 	}
 
 	return nil
@@ -78,7 +82,7 @@ func ReplaceProfileInFile(filename, profileName string, profile dto.Profile) err
 	lines := strings.Split(string(input), "\n")
 
 	for i, line := range lines {
-		if strings.Contains(line, profileName) {
+		if strings.Contains(line, fmt.Sprintf("[%s]", profileName)) {
 			lines[i] = fmt.Sprintf("[%s]", profileName)
 			lines[i+1] = fmt.Sprintf("aws_access_key_id = %s", profile.Creds.AWSAccessKey)
 			lines[i+2] = fmt.Sprintf("aws_secret_access_key = %s", profile.Creds.AWSSecretAccessKey)
