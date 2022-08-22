@@ -40,8 +40,6 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 	//} else {
 	//	ReplaceProfileInFile(dirname+"/.aws/credentials", account, resp)
 	//}
-
-	return
 }
 
 func WriteProfileToFile(profile dto.Profile, dirname string) error {
