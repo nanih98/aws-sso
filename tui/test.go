@@ -2,39 +2,52 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"regexp"
 	"strings"
 
 	"github.com/manifoldco/promptui"
+	"github.com/nanih98/aws-sso/dto"
+	"golang.design/x/clipboard"
 )
 
-type pepper struct {
-	Name     string
-	HeatUnit int
-	Peppers  int
+func getProfiles(filepath string) []dto.Profile {
+	b, err := ioutil.ReadFile(filepath)
+
+	var items []dto.Profile
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	data := regexp.MustCompile(`\[([^\[\]]*)\]`) // prints content inside brackets, without filtering
+
+	profiles := data.FindAllString(string(b), -1)
+
+	for _, profile := range profiles {
+		profile = strings.Trim(profile, "[")
+		profile = strings.Trim(profile, "]")
+		items = append(items, dto.Profile{Key: profile})
+	}
+
+	return items // ["[Production Platform]","[Sandbox Platform]"]
 }
 
 func main() {
-	// peppers := []pepper{
-	// 	{Name: "Bell Pepper", HeatUnit: 0, Peppers: 0},
-	// 	{Name: "Banana Pepper", HeatUnit: 100, Peppers: 1},
-	// 	{Name: "Poblano", HeatUnit: 1000, Peppers: 2},
-	// 	{Name: "Jalapeño", HeatUnit: 3500, Peppers: 3},
-	// 	{Name: "Aleppo", HeatUnit: 10000, Peppers: 4},
-	// 	{Name: "Tabasco", HeatUnit: 30000, Peppers: 5},
-	// 	{Name: "Malagueta", HeatUnit: 50000, Peppers: 6},
-	// 	{Name: "Habanero", HeatUnit: 100000, Peppers: 7},
-	// 	{Name: "Red Savina Habanero", HeatUnit: 350000, Peppers: 8},
-	// 	{Name: "Dragon’s Breath", HeatUnit: 855000, Peppers: 9},
-	// }
+	profiles := getProfiles("/Users/danielcascalesromero/.aws/credentials")
 
-	profiles := []string{"Sandbox", "Production", "Mediabuying"}
+	// Init returns an error if the package is not ready for use.
+	err := clipboard.Init()
+	if err != nil {
+		panic(err)
+	}
 
 	templates := &promptui.SelectTemplates{
 		Label:    "{{ . }}?",
-		Active:   "\U0001F336 {{ .Name | cyan }} ({{ .HeatUnit | red }})",
-		Inactive: "  {{ .Name | cyan }} ({{ .HeatUnit | red }})",
-		Selected: "\U0001F336 {{ .Name | red | cyan }}",
-		// 		Details: `
+		Active:   "🚀 {{ .Key | cyan }}",
+		Inactive: "  {{ .Key | cyan }}",
+		Selected: "🚀 {{ .Key | red | cyan }}",
+		// Details: `
 		// --------- Pepper ----------
 		// {{ "Name:" | faint }}	{{ .Name }}
 		// {{ "Heat Unit:" | faint }}	{{ .HeatUnit }}
@@ -43,17 +56,17 @@ func main() {
 
 	searcher := func(input string, index int) bool {
 		profile := profiles[index]
-		name := strings.Replace(strings.ToLower(profile), " ", "", -1)
+		name := strings.Replace(strings.ToLower(profile.Key), " ", "", -1)
 		input = strings.Replace(strings.ToLower(input), " ", "", -1)
 
 		return strings.Contains(name, input)
 	}
 
 	prompt := promptui.Select{
-		Label:     "AWS PROFILES",
+		Label:     "Select your AWS PROFILE: ",
 		Items:     profiles,
 		Templates: templates,
-		Size:      4,
+		Size:      10,
 		Searcher:  searcher,
 	}
 
@@ -63,6 +76,7 @@ func main() {
 		fmt.Printf("Prompt failed %v\n", err)
 		return
 	}
-
-	fmt.Printf("You choose number %d: %s\n", i+1, profiles[i])
+	fmt.Printf("Profile %s copied to the clipboard, paste in your terminal to set the AWS_PROFILE env", profiles[i].Key)
+	clipboard.Write(clipboard.FmtText, []byte(fmt.Sprintf("export AWS_PROFILE=%s", profiles[i].Key)))
+	//fmt.Printf("You choose number %d: %s\n", i+1, profiles[i].Key)
 }

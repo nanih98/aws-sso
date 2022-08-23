@@ -100,7 +100,7 @@ func (m model) View() string {
 	return "\n" + m.list.View()
 }
 
-func GetProfiles(filter, filepath string) []string {
+func getProfiles(filter, filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
 
 	if err != nil {
@@ -126,7 +126,7 @@ func Profile(log *logger.CustomLogger, filter string) {
 		log.Info("Searching without filter")
 	}
 
-	profiles := GetProfiles(filter, credentialsPath) //this is a harcoded path
+	profiles := getProfiles(filter, credentialsPath) //this is a harcoded path
 
 	var items []list.Item
 

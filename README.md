@@ -81,6 +81,8 @@ $ go install github.com/nanih98/aws-sso
 - [Github issue](https://github.com/aws/aws-sdk-go-v2/issues/1222)
 - [Cobra](https://github.com/spf13/cobra)
 - [Charm](https://charm.sh/)
+- Export using https://stackoverflow.com/questions/1506010/how-to-use-export-with-python-on-linux
+- [Go clipboard](https://github.com/golang-design/clipboard)
 
 # Contributors
 

@@ -48,7 +48,6 @@ func SetProfile(log *logger.CustomLogger, level *string, filter *string) *cobra.
 		Short: "Set your aws profile",
 		Long:  "This script will read your .aws/credentials file and will set the AWS_PROFILE env",
 		Run: func(cmd *cobra.Command, args []string) {
-			utils.PrintBanner(version)
 			log.LogLevel(*level)
 			sso.Profile(log, *filter)
 		},
