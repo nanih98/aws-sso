@@ -33,7 +33,7 @@ changelog:
       - '^test:'
 
 brews:
-  - # GitHub/GitLab repository to push the formula to
+  - # GitHub repository to push the formula
     tap:
       owner: nanih98
       name: aws-sso

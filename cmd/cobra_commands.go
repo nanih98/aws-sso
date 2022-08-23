@@ -60,3 +60,14 @@ func GetCLIVersion() *cobra.Command {
 		},
 	}
 }
+
+func Usage() *cobra.Command {
+	return &cobra.Command{
+		Use:   "usage",
+		Short: "Usage will print the readme of the project",
+		Long:  "Blablabla",
+		Run: func(cmd *cobra.Command, args []string) {
+			utils.RenderREADME()
+		},
+	}
+}
