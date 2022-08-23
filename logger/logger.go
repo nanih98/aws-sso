@@ -32,6 +32,8 @@ func (c *CustomLogger) LogLevel(level string) {
 		c.Log.Logger.SetLevel(logrus.DebugLevel)
 	case "info":
 		c.Log.Logger.SetLevel(logrus.InfoLevel)
+	case "warning":
+		c.Log.Logger.SetLevel(logrus.WarnLevel)
 	}
 }
 
@@ -41,12 +43,13 @@ func Logger() CustomLogger {
 		Out:       os.Stderr,
 		Formatter: new(logrus.TextFormatter),
 		Hooks:     make(logrus.LevelHooks),
-		//Level:     logrus.DebugLevel,
 	}
 
 	contextLogger := log.WithFields(logrus.Fields{
 		"app": "aws-sso",
 	})
+
+
 
 	return CustomLogger{Log: contextLogger}
 }
