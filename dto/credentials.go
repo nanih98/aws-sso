@@ -14,13 +14,14 @@ type Credentials struct {
 
 // Profile is a struct for each account in .aws/credentials configuration file
 type Profile struct {
+	Key   string
 	Creds Credentials `json:"credentials"`
 }
 
 // MarshalJSON is an implementation of the function from the official pkg
 func (s Profile) MarshalJSON() ([]byte, error) {
 	data := map[string]interface{}{
-		Key: s.Creds,
+		s.Key: s.Creds,
 	}
 	return json.Marshal(data)
 }

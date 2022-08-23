@@ -9,7 +9,7 @@ var (
 	startURL    string
 	region      string
 	level       string
-	filter 		string
+	filter      string
 )
 
 func init() {
@@ -18,10 +18,14 @@ func init() {
 	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log, &level)
 	start := StartCommand(&profileName, &log, &level)
 	profile := SetProfile(&log, &level, &filter)
+	version := GetCLIVersion()
+	usage := Usage()
 
 	rootCmd.AddCommand(ssoInit)
 	rootCmd.AddCommand(start)
 	rootCmd.AddCommand(profile)
+	rootCmd.AddCommand(version)
+	rootCmd.AddCommand(usage)
 
 	//Debug
 	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
@@ -31,7 +35,7 @@ func init() {
 	start.MarkPersistentFlagRequired("profileName")
 
 	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
+	ssoInit.PersistentFlags().StringVar(&region, "region", "eu-west-1", "AWS region")
 	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")

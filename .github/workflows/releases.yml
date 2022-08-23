@@ -5,7 +5,7 @@ on:
     tags:
       - '*'
     branches:
-      - '*' # to avoid pipelines by the moment
+      - '*'
 
 permissions:
   contents: write
@@ -35,6 +35,4 @@ jobs:
           version: latest
           args: release --rm-dist
         env:
-          # automatically generated at the start of each github action and it can be
-          # used in places like here if authentication to github is needed.
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}

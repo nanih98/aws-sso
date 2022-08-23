@@ -100,15 +100,15 @@ func (m model) View() string {
 	return "\n" + m.list.View()
 }
 
-func GetProfiles(filter, filepath string) []string {
+func getProfiles(filter, filepath string) []string {
 	b, err := ioutil.ReadFile(filepath)
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	data := regexp.MustCompile(`\w+-` + filter)
-	//data := regexp.MustCompile(`\[([^\[\]]*)\]`) // prints content inside brackets, without filtering
+	//data := regexp.MustCompile(`\w+-` + filter)
+	data := regexp.MustCompile(`\[([^\[\]]*)\]`) // prints content inside brackets, without filtering
 
 	profiles := data.FindAllString(string(b), -1)
 
@@ -116,6 +116,7 @@ func GetProfiles(filter, filepath string) []string {
 }
 
 func Profile(log *logger.CustomLogger, filter string) {
+	log.Info("Setting your AWS_PROFILE environment variable...")
 	log.Info("Reading file .aws/credentials")
 	log.Info(fmt.Sprintf("Serching credentials for profile name %s", filter))
 
@@ -125,7 +126,7 @@ func Profile(log *logger.CustomLogger, filter string) {
 		log.Info("Searching without filter")
 	}
 
-	profiles := GetProfiles(filter, credentialsPath) //this is a harcoded path
+	profiles := getProfiles(filter, credentialsPath) //this is a harcoded path
 
 	var items []list.Item
 

@@ -31,7 +31,7 @@ func UserDirectory(log *logger.CustomLogger) (string, error) {
 	return configPath, nil
 }
 
-// getUserHome return the home of the user. Example: /Users/myuser or /home/myuser
+// GetUserHome return the home of the user. Example: /Users/myuser or /home/myuser
 func GetUserHome(log *logger.CustomLogger) string {
 	dirname, err := os.UserHomeDir()
 
@@ -52,15 +52,3 @@ func dirExists(configPath string, log *logger.CustomLogger) error {
 	}
 	return nil
 }
-
-// GetConfigurations is a blablabla
-//func GetConfigurations() {
-//	files, err := ioutil.ReadDir("/tmp/aws-sso/")
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	for _, file := range files {
-//		fmt.Println(file.Name(), file.IsDir())
-//	}
-//}

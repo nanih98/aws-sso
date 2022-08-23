@@ -1,11 +1,18 @@
 package cmd
 
 import (
+	"fmt"
+
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
 	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
 	"github.com/spf13/cobra"
+)
+
+var (
+	version   string
+	goversion string
 )
 
 func InitSsoCommand(profileName *string, startURL *string, region *string, log *logger.CustomLogger, level *string) *cobra.Command {
@@ -24,8 +31,9 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 	return &cobra.Command{
 		Use:   "start",
 		Short: "Start the application",
-		Long:  "Start the application",
+		Long:  "Start the application will start the program to fetch all the credentials",
 		Run: func(cmd *cobra.Command, args []string) {
+			utils.PrintBanner(version)
 			log.LogLevel(*level)
 			filePath := utils.FileExists(log, *profileName)
 			startURL, region := utils.ReadFile(log, filePath)
@@ -42,6 +50,28 @@ func SetProfile(log *logger.CustomLogger, level *string, filter *string) *cobra.
 		Run: func(cmd *cobra.Command, args []string) {
 			log.LogLevel(*level)
 			sso.Profile(log, *filter)
+		},
+	}
+}
+
+func GetCLIVersion() *cobra.Command {
+	return &cobra.Command{
+		Use:   "version",
+		Short: "aws-sso version you are using",
+		Long:  "Get the cli aws-sso version installed",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println("aws-sso:", version, "with go version", goversion)
+		},
+	}
+}
+
+func Usage() *cobra.Command {
+	return &cobra.Command{
+		Use:   "usage",
+		Short: "Usage will print the README.md of the project",
+		Long:  "Usage will print the readme of the project. You need internet connection because it will download the README from the github repository",
+		Run: func(cmd *cobra.Command, args []string) {
+			utils.RenderREADME()
 		},
 	}
 }
