@@ -42,14 +42,14 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 	}
 }
 
-func SetProfile(log *logger.CustomLogger, level *string, filter *string) *cobra.Command {
+func SetProfile(log *logger.CustomLogger, level *string) *cobra.Command {
 	return &cobra.Command{
 		Use:   "profile",
 		Short: "Set your aws profile",
 		Long:  "This script will read your .aws/credentials file and will set the AWS_PROFILE env",
 		Run: func(cmd *cobra.Command, args []string) {
 			log.LogLevel(*level)
-			sso.Profile(log, *filter)
+			sso.Profile(log)
 		},
 	}
 }
