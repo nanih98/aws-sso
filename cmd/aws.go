@@ -35,7 +35,7 @@ func init() {
 	start.MarkPersistentFlagRequired("profileName")
 
 	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
-	ssoInit.PersistentFlags().StringVar(&region, "region", "", "AWS region")
+	ssoInit.PersistentFlags().StringVar(&region, "region", "eu-west-1", "AWS region")
 	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")

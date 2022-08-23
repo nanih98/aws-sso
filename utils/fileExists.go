@@ -13,7 +13,6 @@ import (
 
 func checkFileExists(filePath string) bool {
 	_, err := os.Stat(filePath)
-	//return !os.IsNotExist(err)
 	return !errors.Is(err, os.ErrNotExist)
 }
 
@@ -46,7 +45,6 @@ func ReadFile(log *logger.CustomLogger, filePath string) (string, string) {
 		log.Fatal(err)
 	}
 
-	// Now let's unmarshall the data into `payload`
 	err = json.Unmarshal(content, &data)
 	if err != nil {
 		log.Fatal(err)
