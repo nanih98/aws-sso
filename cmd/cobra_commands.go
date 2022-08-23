@@ -10,7 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var version string
+var (
+	version   string
+	goversion string
+)
 
 func InitSsoCommand(profileName *string, startURL *string, region *string, log *logger.CustomLogger, level *string) *cobra.Command {
 	return &cobra.Command{
@@ -30,6 +33,7 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 		Short: "Start the application",
 		Long:  "Start the application",
 		Run: func(cmd *cobra.Command, args []string) {
+			utils.PrintBanner(version)
 			log.LogLevel(*level)
 			filePath := utils.FileExists(log, *profileName)
 			startURL, region := utils.ReadFile(log, filePath)
@@ -44,6 +48,7 @@ func SetProfile(log *logger.CustomLogger, level *string, filter *string) *cobra.
 		Short: "Set your aws profile",
 		Long:  "This script will read your .aws/credentials file and will set the AWS_PROFILE env",
 		Run: func(cmd *cobra.Command, args []string) {
+			utils.PrintBanner(version)
 			log.LogLevel(*level)
 			sso.Profile(log, *filter)
 		},
@@ -56,7 +61,7 @@ func GetCLIVersion() *cobra.Command {
 		Short: "aws-sso version you are using",
 		Long:  "Get the cli aws-sso version",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(version)
+			fmt.Println("aws-sso:", version, "with go version", goversion)
 		},
 	}
 }
