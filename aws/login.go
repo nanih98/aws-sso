@@ -86,23 +86,6 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	}
 
 	configuration.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
-	// fmt.Println("-------------------------------------------------------")
-	// // exchange token received during oidc flow to fetch actual aws access keys
-	// fmt.Printf("\n\nFetching credentails for role %v of account %v for user\n", roleName, accountID)
-	// credentials, err := ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
-	//  AccessToken: token.AccessToken,
-	//  AccountId:   aws.String(accountID),
-	//  RoleName:    aws.String(roleName),
-	// })
-	// if err != nil {
-	//  fmt.Println(err)
-	// }
-	// // // printing access key to show how they are accessed
-	// fmt.Printf("\n\nPriting aws access keysz")
-	// fmt.Println("Access key id: ", aws.ToString(credentials.RoleCredentials.AccessKeyId))
-	// fmt.Println("Secret access key: ", aws.ToString(credentials.RoleCredentials.SecretAccessKey))
-	// fmt.Println("Expiration: ", aws.ToInt64(&credentials.RoleCredentials.Expiration))
-	// fmt.Println("Session token: ", aws.ToString(credentials.RoleCredentials.SessionToken))
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
@@ -112,9 +95,8 @@ func (a *AWSLogin) GetAWSConfig() {
 	a.cfg = cfg
 }
 func (a *AWSLogin) GetRolePaginator(accountInfo types.AccountInfo) *sso.ListAccountRolesPaginator {
-	a.log.Info("-------------------------------------------------------")
-	a.log.Info(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
-	a.log.Info(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
+	a.log.Debug(fmt.Sprintf("\nAccount ID: %v Name: %v Email: %v\n", aws.ToString(accountInfo.AccountId), aws.ToString(accountInfo.AccountName), aws.ToString(accountInfo.EmailAddress)))
+	a.log.Debug(fmt.Sprintf("\n\nFetching roles of account %v for user\n", aws.ToString(accountInfo.AccountId)))
 	// list roles for a given account [ONLY provided for better example coverage]
 	return sso.NewListAccountRolesPaginator(a.ssoClient, &sso.ListAccountRolesInput{
 		AccessToken: a.token.AccessToken,
@@ -123,8 +105,8 @@ func (a *AWSLogin) GetRolePaginator(accountInfo types.AccountInfo) *sso.ListAcco
 }
 func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
 	for _, roleInfo := range listAccountRolesOutput.RoleList {
-		a.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
-		a.log.Info("Fetching credentials....")
+		a.log.Debug(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
+		a.log.Debug("Fetching credentials....")
 		credentials, err := a.ssoClient.GetRoleCredentials(context.TODO(), &sso.GetRoleCredentialsInput{
 			AccessToken: a.token.AccessToken,
 			AccountId:   roleInfo.AccountId,
@@ -193,11 +175,12 @@ func (a *AWSLogin) GenerateToken() error {
 	a.token = token
 	return nil
 }
+
 func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput, customLogger *logger.CustomLogger) {
-	customLogger.Info("Writing file....")
-	customLogger.Info(fmt.Sprintf("\n\nPrinting credentials"))
-	customLogger.Info(fmt.Sprintf("Access key id: %s", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
-	customLogger.Info(fmt.Sprintf("Secret access key: %s", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
-	customLogger.Info(fmt.Sprintf("Expiration: %d", aws.ToInt64(&credentials.RoleCredentials.Expiration)))
-	customLogger.Info(fmt.Sprintf("Session token: %s", aws.ToString(credentials.RoleCredentials.SessionToken)))
+	customLogger.Debug("Writing file....")
+	customLogger.Debug(fmt.Sprintf("\n\nPrinting credentials"))
+	customLogger.Debug(fmt.Sprintf("Access key id: %s", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
+	customLogger.Debug(fmt.Sprintf("Secret access key: %s", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
+	customLogger.Debug(fmt.Sprintf("Expiration: %d", aws.ToInt64(&credentials.RoleCredentials.Expiration)))
+	customLogger.Debug(fmt.Sprintf("Session token: %s", aws.ToString(credentials.RoleCredentials.SessionToken)))
 }

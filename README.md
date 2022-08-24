@@ -1,6 +1,6 @@
 <p align="center" >
   <img src="logo.png" alt="logo" width="250"/>
-  <h3 align="center">aws-sso</h3>
+  <h3 align="center">aws-sso (ALPHA)</h3>
   <p align="center">AWS credentials using SSO</p>
 </p>
 
@@ -10,9 +10,11 @@
   <img alt="GitHub go.mod Go version" src="https://img.shields.io/github/go-mod/go-version/nanih98/aws-sso">
 </p>
 
-[![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/releases.yml)
-[![Pipeline](https://github.com/nanih98/aws-sso/actions/workflows/lint.yml/badge.svg)](https://github.com/nanih98/aws-sso/actions/workflows/lint.yml)
-[![License](https://img.shields.io/github/license/nanih98/aws-sso)](/LICENSE)
+<p align="center" >
+<a href="https://github.com/nanih98/aws-sso/actions/workflows/releases.yml"><img alt="Pipeline" src="https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg"></a>
+<a href="https://github.com/nanih98/aws-sso/actions/workflows/lint.yml"><img alt="Pipeline" src="https://github.com/nanih98/aws-sso/actions/workflows/lint.yml/badge.svg"></a>
+<a href="/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/nanih98/aws-sso"></a>
+</p>
 
 This is a terminal tool to easly log in in aws using SSO. Build with❤️in Golang
 
@@ -28,6 +30,7 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
   - [Using brew](#using-brew)
   - [Using go](#using-go)
   - [Download the binaries](#download-the-binaries)
+- [Usage](#usage)
 - [TO DO](#to-do)
 - [Credits](#credits)
 - [Contributors](#contributors)
@@ -49,6 +52,7 @@ The purpose of this tool is to be able to obtain the credentials accesskey, secr
 ## Tested environments
 
 * Tested with Google Workspaces as external identity provider in AWS SSO
+* Tested in Mac OSX and Linux
 
 # Installation
 
@@ -71,17 +75,26 @@ $ go install github.com/nanih98/aws-sso
 
 [Releases](https://github.com/nanih98/aws-sso/releases)
 
+# Usage
+
+Read [usage](./docs/usage.md) or type:
+
+```bash
+$ aws-sso usage
+```
+
 # TO DO
 
-- Multithread en las llamadas a los profiles
-- El fichero .aws/credentials debe soportar varios profiles de credenciales
+- Multithread with goroutines
+- .aws/credentials file must support profileName from different accounts
+- Logging
+- Refactor code
 
 # Credits 
 
 - [Github issue](https://github.com/aws/aws-sdk-go-v2/issues/1222)
 - [Cobra](https://github.com/spf13/cobra)
 - [Charm](https://charm.sh/)
-- Export using https://stackoverflow.com/questions/1506010/how-to-use-export-with-python-on-linux
 - [Go clipboard](https://github.com/golang-design/clipboard)
 
 # Contributors
