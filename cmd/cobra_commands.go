@@ -37,7 +37,7 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 			log.LogLevel(*level)
 			filePath := utils.FileExists(log, *profileName)
 			startURL, region := utils.ReadFile(log, filePath)
-			sso.Login(startURL, region, *profileName, sso.NewLogin(log))
+			sso.Login(startURL, region, sso.NewLogin(log))
 		},
 	}
 }

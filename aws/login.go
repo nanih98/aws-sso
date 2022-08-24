@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
-	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -43,7 +44,7 @@ func NewLogin(log *logger.CustomLogger) *AWSLogin {
 }
 
 // Login function blablabla
-func Login(startURL string, region string, profileName string, awsSso *AWSLogin) {
+func Login(startURL string, region string, awsSso *AWSLogin) {
 	var err error
 	os.Setenv("AWS_REGION", region)
 	awsSso.log.Info("Starting the program....")
@@ -79,7 +80,7 @@ func Login(startURL string, region string, profileName string, awsSso *AWSLogin)
 				if err != nil {
 					awsSso.log.Fatal(err)
 				}
-				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo, profileName)
+				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
 			}
 		}
 	}
@@ -120,7 +121,7 @@ func (a *AWSLogin) GetRolePaginator(accountInfo types.AccountInfo) *sso.ListAcco
 		AccountId:   accountInfo.AccountId,
 	})
 }
-func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo, profileName string) {
+func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
 	for _, roleInfo := range listAccountRolesOutput.RoleList {
 		a.log.Info(fmt.Sprintf("Account ID: %v Role Name: %v\n", aws.ToString(roleInfo.AccountId), aws.ToString(roleInfo.RoleName)))
 		a.log.Info("Fetching credentials....")
@@ -134,7 +135,7 @@ func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountR
 		}
 		printLoggingStatus(credentials, a.log)
 		profile, err := configuration.ConfigGenerator(
-			fmt.Sprintf("%s-%s", aws.ToString(accountInfo.AccountName), profileName),
+			aws.ToString(accountInfo.AccountName),
 			aws.ToString(credentials.RoleCredentials.AccessKeyId),
 			aws.ToString(credentials.RoleCredentials.SecretAccessKey),
 			aws.ToString(credentials.RoleCredentials.SessionToken))
