@@ -5,12 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/nanih98/aws-sso/dto"
+	"github.com/pelletier/go-toml/v2"
 	"io"
 	"io/ioutil"
 	"os"
 	"strings"
-
-	"github.com/pelletier/go-toml/v2"
 )
 
 func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) (dto.Profile, error) {
@@ -74,6 +73,7 @@ func WriteProfilesToFile(profiles []dto.Profile, dirname string) error {
 		convert(strings.NewReader(string(data)), b)
 		fmt.Printf(b.String())
 		f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+		f.Write([]byte("\n"))
 	}
 	return nil
 }

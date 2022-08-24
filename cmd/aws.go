@@ -9,7 +9,6 @@ var (
 	startURL    string
 	region      string
 	level       string
-	filter      string
 )
 
 func init() {
@@ -17,7 +16,7 @@ func init() {
 
 	ssoInit := InitSsoCommand(&profileName, &startURL, &region, &log, &level)
 	start := StartCommand(&profileName, &log, &level)
-	profile := SetProfile(&log, &level, &filter)
+	profile := SetProfile(&log, &level)
 	version := GetCLIVersion()
 	usage := Usage()
 
@@ -39,6 +38,4 @@ func init() {
 	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
 	ssoInit.MarkPersistentFlagRequired("startURL")
 	ssoInit.MarkPersistentFlagRequired("region")
-
-	profile.PersistentFlags().StringVar(&filter, "filter", "", "Filter the profilename inside .aws/credentials file")
 }
