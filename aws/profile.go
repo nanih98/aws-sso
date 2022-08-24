@@ -40,7 +40,7 @@ func clipBoard(log *logger.CustomLogger, profile string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	clipboard.Write(clipboard.FmtText, []byte(fmt.Sprintf("export AWS_PROFILE=%s", profile)))
+	clipboard.Write(clipboard.FmtText, []byte(fmt.Sprintf("export AWS_PROFILE='%s'", profile)))
 	log.Info(fmt.Sprintf("Profile %s copied to the clipboard, paste the command in your terminal to set the AWS_PROFILE env", profile))
 }
 
