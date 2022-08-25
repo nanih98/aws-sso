@@ -6,7 +6,7 @@ builds:
   - env:
       - CGO_ENABLED=0
     ldflags:
-      - -s -w -X github.com/nanih98/aws-sso/cmd.version={{ .Tag }} -X github.com/nanih98/aws-sso/cmd.goversion=$(go version)
+      - -s -w -X github.com/nanih98/aws-sso/cmd.version={{ .Tag }}
     goos:
       - linux
       - windows
