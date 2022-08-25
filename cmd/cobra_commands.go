@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"runtime"
 
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
@@ -12,7 +13,9 @@ import (
 
 var (
 	version   string
-	goversion string
+	goversion = runtime.Version()
+	goos      = runtime.GOOS
+	goarch    = runtime.GOARCH
 )
 
 func InitSsoCommand(profileName *string, startURL *string, region *string, log *logger.CustomLogger, level *string) *cobra.Command {
@@ -60,7 +63,7 @@ func GetCLIVersion() *cobra.Command {
 		Short: "aws-sso version you are using",
 		Long:  "Get the cli aws-sso version installed",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("aws-sso:", version, "with go version", goversion)
+			fmt.Println("aws-sso:", version, "with go version", goversion, "compiled in", goos, goarch)
 		},
 	}
 }
