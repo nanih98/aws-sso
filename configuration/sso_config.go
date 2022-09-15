@@ -2,14 +2,14 @@ package configuration
 
 import (
 	"encoding/json"
+	"github.com/nanih98/aws-sso/file_manager"
 
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/logger"
-	"github.com/nanih98/aws-sso/utils"
 )
 
 // GetSSOConfig get the user input data
-func GetSSOConfig(log *logger.CustomLogger, profileName string, startURL string, region string) {
+func GetSSOConfig(log *logger.CustomLogger, profileName string, startURL string, region string, processor *file_manager.FileProcessor) {
 	log.Info("Setting up configuration...")
 
 	config := dto.Configuration{
@@ -24,5 +24,5 @@ func GetSSOConfig(log *logger.CustomLogger, profileName string, startURL string,
 		log.Fatal(err)
 	}
 
-	utils.WriteConfigFile(resp, profileName, log)
+	processor.WriteConfigFile(resp, profileName)
 }

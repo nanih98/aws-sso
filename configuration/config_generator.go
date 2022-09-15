@@ -1,19 +1,13 @@
 package configuration
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/nanih98/aws-sso/dto"
-	"github.com/pelletier/go-toml/v2"
-	"io"
 	"io/ioutil"
-	"os"
 	"strings"
 )
 
 func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) (dto.Profile, error) {
-	dto.Key = account
 	resp := dto.Profile{
 		Key: account,
 		Creds: dto.Credentials{
@@ -24,72 +18,23 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 		},
 	}
 	return resp, nil
-
-	//dirname, err := os.UserHomeDir()
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//err = WriteProfileToFile(resp, dirname)
-	//if err != nil {
-	//	return err
-	//}
-	//_, err = os.Stat(dirname + "/.aws/credentials")
-	//if err != nil {
-	//} else {
-	//	ReplaceProfileInFile(dirname+"/.aws/credentials", account, resp)
-	//}
 }
 
-func WriteProfileToFile(profile dto.Profile, dirname string) error {
-	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	//f, err := os.OpenFile("/tmp/credentials", os.O_RDWR|os.O_WRONLY|os.O_CREATE, 0600)
-	//os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	data, _ := json.Marshal(profile)
-	b := new(bytes.Buffer)
-	convert(strings.NewReader(string(data)), b)
-	fmt.Printf(b.String())
-	f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
-	return nil
-}
-
-func WriteProfilesToFile(profiles []dto.Profile, dirname string) error {
-	f, err := os.OpenFile(dirname, os.O_APPEND|os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	for i, _ := range profiles {
-		data, _ := json.Marshal(profiles[i])
-		b := new(bytes.Buffer)
-		convert(strings.NewReader(string(data)), b)
-		fmt.Printf(b.String())
-		f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
-		f.Write([]byte("\n"))
-	}
-	return nil
-}
-
-func convert(r io.Reader, w io.Writer) error {
-	var v interface{}
-
-	d := json.NewDecoder(r)
-	err := d.Decode(&v)
-	if err != nil {
-		return err
-	}
-
-	e := toml.NewEncoder(w)
-	return e.Encode(v)
-}
+//func WriteProfileToFile(profile dto.Profile, dirname string) error {
+//	f, err := os.OpenFile(dirname+"/.aws/credentials", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+//	if err != nil {
+//		return err
+//	}
+//
+//	defer f.Close()
+//
+//	data, _ := json.Marshal(profile)
+//	b := new(bytes.Buffer)
+//	convert(strings.NewReader(string(data)), b)
+//	fmt.Printf(b.String())
+//	f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+//	return nil
+//}
 
 func ReplaceProfileInFile(filename, profileName string, profile dto.Profile) error {
 	input, err := ioutil.ReadFile(filename)

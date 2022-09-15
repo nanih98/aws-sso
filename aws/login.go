@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/nanih98/aws-sso/file_manager"
 	"os"
 
 	"github.com/nanih98/aws-sso/dto"
@@ -28,9 +29,10 @@ type AWSLogin struct {
 	ssoClient     *sso.Client
 	log           *logger.CustomLogger
 	profiles      []dto.Profile
+	fileManager   *file_manager.FileProcessor
 }
 
-func NewLogin(log *logger.CustomLogger) *AWSLogin {
+func NewLogin(log *logger.CustomLogger, fileManager *file_manager.FileProcessor) *AWSLogin {
 	return &AWSLogin{
 		cfg:           aws.Config{},
 		ssooidcClient: &ssooidc.Client{},
@@ -40,6 +42,7 @@ func NewLogin(log *logger.CustomLogger) *AWSLogin {
 		ssoClient:     &sso.Client{},
 		log:           log,
 		profiles:      []dto.Profile{},
+		fileManager:   fileManager,
 	}
 }
 
@@ -85,7 +88,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 		}
 	}
 
-	configuration.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
+	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
