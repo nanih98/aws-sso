@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/nanih98/aws-sso/file_manager"
 	"os"
+	"sync"
 
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
@@ -71,6 +72,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	accountPaginator := sso.NewListAccountsPaginator(awsSso.ssoClient, &sso.ListAccountsInput{
 		AccessToken: awsSso.token.AccessToken,
 	})
+	var wg sync.WaitGroup
 	for accountPaginator.HasMorePages() {
 		listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
@@ -83,10 +85,15 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 				if err != nil {
 					awsSso.log.Fatal(err)
 				}
-				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				wg.Add(1)
+				go func(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
+					defer wg.Done()
+					awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				}(listAccountRolesOutput, accountInfo)
 			}
 		}
 	}
+	wg.Wait()
 
 	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
 }
