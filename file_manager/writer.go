@@ -3,7 +3,6 @@ package file_manager
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
 	"github.com/pelletier/go-toml/v2"
@@ -25,7 +24,6 @@ func (p *FileProcessor) WriteProfilesToFile(profiles []dto.Profile, dirname stri
 		data, _ := json.Marshal(profiles[i])
 		b := new(bytes.Buffer)
 		convert(strings.NewReader(string(data)), b)
-		fmt.Printf(b.String())
 		f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
 		f.Write([]byte("\n"))
 	}
