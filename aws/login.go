@@ -74,25 +74,24 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	})
 	var wg sync.WaitGroup
 	for accountPaginator.HasMorePages() {
-		wg.Add(1)
-		go func(accountPaginator *sso.ListAccountsPaginator) {
-			defer wg.Done()
-			listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
-			if err != nil {
-				awsSso.log.Fatal(err)
-			}
-			for _, accountInfo := range listAccountsOutput.AccountList {
-				rolePaginator := awsSso.GetRolePaginator(accountInfo)
-				for rolePaginator.HasMorePages() {
-					listAccountRolesOutput, err := rolePaginator.NextPage(context.TODO())
-					if err != nil {
-						awsSso.log.Fatal(err)
-					}
-					wg.Add(1)
-					awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+		listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
+		if err != nil {
+			awsSso.log.Fatal(err)
+		}
+		for _, accountInfo := range listAccountsOutput.AccountList {
+			rolePaginator := awsSso.GetRolePaginator(accountInfo)
+			for rolePaginator.HasMorePages() {
+				listAccountRolesOutput, err := rolePaginator.NextPage(context.TODO())
+				if err != nil {
+					awsSso.log.Fatal(err)
 				}
+				wg.Add(1)
+				go func(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
+					defer wg.Done()
+					awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				}(listAccountRolesOutput, accountInfo)
 			}
-		}(accountPaginator)
+		}
 	}
 	wg.Wait()
 
