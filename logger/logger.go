@@ -53,5 +53,10 @@ func Logger() CustomLogger {
 		"app": "aws-sso",
 	})
 
+	log.SetFormatter(&logrus.TextFormatter{
+		DisableColors: false,
+		FullTimestamp: true,
+	})
+
 	return CustomLogger{Log: contextLogger}
 }

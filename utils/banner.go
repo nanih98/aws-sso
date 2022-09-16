@@ -16,4 +16,5 @@ func PrintBanner(version string) {
 		██║  ██║╚███╔███╔╝███████║    ███████║███████║╚██████╔╝		License: Apache License 2.0
 		╚═╝  ╚═╝ ╚══╝╚══╝ ╚══════╝    ╚══════╝╚══════╝ ╚═════╝ 
 	%s`, colorCyan, version, colorReset)
+	fmt.Println("")
 }

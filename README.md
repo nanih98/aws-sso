@@ -31,9 +31,8 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
   - [Using go](#using-go)
   - [Download the binaries](#download-the-binaries)
 - [Usage](#usage)
-- [TO DO](#to-do)
 - [Credits](#credits)
-- [Contributors](#contributors)
+- [Contribution](#contribution)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -83,12 +82,6 @@ Read [usage](./docs/usage.md) or type:
 $ aws-sso usage
 ```
 
-# TO DO
-
-- Multithread with goroutines
-- .aws/credentials file must support profileName from different accounts
-- Logging
-- Refactor code
 
 # Credits 
 
@@ -97,9 +90,7 @@ $ aws-sso usage
 - [Charm](https://charm.sh/)
 - [Go clipboard](https://github.com/golang-design/clipboard)
 
-# Contributors
-
-<a href="https://github.com/nanih98/aws-sso/graphs/contributors"><img src="https://opencollective.com/aws-sso/contributors.svg?width=890" /></a>
+# Contribution
 
 Pull requests are welcome! Any code refactoring, improvement, implementation...
 

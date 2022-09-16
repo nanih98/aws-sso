@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/nanih98/aws-sso/file_manager"
 	"os"
 	"sync"
+
+	"github.com/nanih98/aws-sso/file_manager"
 
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
@@ -68,11 +69,13 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	// create sso client
 	awsSso.ssoClient = sso.NewFromConfig(awsSso.cfg)
 	// list accounts [ONLY provided for better example coverage]
-	awsSso.log.Info("Fetching list of all accounts for user")
 	accountPaginator := sso.NewListAccountsPaginator(awsSso.ssoClient, &sso.ListAccountsInput{
 		AccessToken: awsSso.token.AccessToken,
 	})
 	var wg sync.WaitGroup
+
+	// Fetching credentials...
+	awsSso.log.Info("Fetching credentials... Please wait")
 	for accountPaginator.HasMorePages() {
 		listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
