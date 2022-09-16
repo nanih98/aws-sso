@@ -2,23 +2,10 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/nanih98/aws-sso/logger"
 )
-
-// WriteConfigFile first initial config file
-func WriteConfigFile(config []byte, profileName string, log *logger.CustomLogger) {
-	directory, err := UserDirectory(log)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fileName := directory + profileName + ".json"
-	log.Info("Saving profile configuration for " + profileName)
-	_ = ioutil.WriteFile(fileName, config, 0644)
-	log.Info("Configuration saved in " + fileName)
-}
 
 // UserDirectory is a function to check if the directory to store the config exists
 func UserDirectory(log *logger.CustomLogger) (string, error) {

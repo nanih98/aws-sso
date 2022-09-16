@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"context"
 	"fmt"
+	"github.com/nanih98/aws-sso/file_manager"
 	"os"
+	"sync"
 
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
@@ -28,9 +30,10 @@ type AWSLogin struct {
 	ssoClient     *sso.Client
 	log           *logger.CustomLogger
 	profiles      []dto.Profile
+	fileManager   *file_manager.FileProcessor
 }
 
-func NewLogin(log *logger.CustomLogger) *AWSLogin {
+func NewLogin(log *logger.CustomLogger, fileManager *file_manager.FileProcessor) *AWSLogin {
 	return &AWSLogin{
 		cfg:           aws.Config{},
 		ssooidcClient: &ssooidc.Client{},
@@ -40,6 +43,7 @@ func NewLogin(log *logger.CustomLogger) *AWSLogin {
 		ssoClient:     &sso.Client{},
 		log:           log,
 		profiles:      []dto.Profile{},
+		fileManager:   fileManager,
 	}
 }
 
@@ -68,6 +72,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	accountPaginator := sso.NewListAccountsPaginator(awsSso.ssoClient, &sso.ListAccountsInput{
 		AccessToken: awsSso.token.AccessToken,
 	})
+	var wg sync.WaitGroup
 	for accountPaginator.HasMorePages() {
 		listAccountsOutput, err := accountPaginator.NextPage(context.TODO())
 		if err != nil {
@@ -80,12 +85,17 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 				if err != nil {
 					awsSso.log.Fatal(err)
 				}
-				awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				wg.Add(1)
+				go func(listAccountRolesOutput *sso.ListAccountRolesOutput, accountInfo types.AccountInfo) {
+					defer wg.Done()
+					awsSso.FetchRoleCredentials(listAccountRolesOutput, accountInfo)
+				}(listAccountRolesOutput, accountInfo)
 			}
 		}
 	}
+	wg.Wait()
 
-	configuration.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
+	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())

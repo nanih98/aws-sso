@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/nanih98/aws-sso/file_manager"
 	"runtime"
 
 	sso "github.com/nanih98/aws-sso/aws"
@@ -25,7 +26,7 @@ func InitSsoCommand(profileName *string, startURL *string, region *string, log *
 		Long:  "Setup SSO configuration like SSO Start url, AWS region...",
 		Run: func(cmd *cobra.Command, args []string) {
 			log.LogLevel(*level)
-			configuration.GetSSOConfig(log, *profileName, *startURL, *region)
+			configuration.GetSSOConfig(log, *profileName, *startURL, *region, file_manager.NewFileProcessor(log))
 		},
 	}
 }
@@ -38,9 +39,10 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 		Run: func(cmd *cobra.Command, args []string) {
 			utils.PrintBanner(version)
 			log.LogLevel(*level)
-			filePath := utils.FileExists(log, *profileName)
-			startURL, region := utils.ReadFile(log, filePath)
-			sso.Login(startURL, region, sso.NewLogin(log))
+			fileProcessor := file_manager.NewFileProcessor(log)
+			filePath := fileProcessor.FileExists(*profileName)
+			startURL, region := fileProcessor.ReadFile(filePath)
+			sso.Login(startURL, region, sso.NewLogin(log, fileProcessor))
 		},
 	}
 }

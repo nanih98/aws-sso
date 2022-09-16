@@ -2,8 +2,6 @@ package dto
 
 import "encoding/json"
 
-var Key = ""
-
 // Credentials is a struct to declare .aws/credentials configuration file
 type Credentials struct {
 	Region             string `json:"region"`
