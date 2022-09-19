@@ -2,7 +2,7 @@ package sso
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 
@@ -14,7 +14,7 @@ import (
 )
 
 func getProfiles(filepath string) []dto.Profile {
-	b, err := ioutil.ReadFile(filepath)
+	b, err := os.ReadFile(filepath)
 
 	var items []dto.Profile
 

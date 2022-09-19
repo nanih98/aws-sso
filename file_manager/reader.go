@@ -4,15 +4,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/nanih98/aws-sso/dto"
-	"io/ioutil"
 	"os"
+
+	"github.com/nanih98/aws-sso/dto"
 )
 
 func (p *FileProcessor) ReadFile(filePath string) (string, string) {
 	var data dto.Configuration
 
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		p.log.Fatal(err)
 	}

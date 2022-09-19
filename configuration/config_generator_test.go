@@ -1,12 +1,13 @@
 package configuration
 
 import (
-	"github.com/nanih98/aws-sso/dto"
-	"github.com/nanih98/aws-sso/file_manager"
-	"github.com/stretchr/testify/assert"
-	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/nanih98/aws-sso/dto"
+	"github.com/nanih98/aws-sso/file_manager"
+	"github.com/nanih98/aws-sso/logger"
+	"github.com/stretchr/testify/assert"
 )
 
 //func TestWriteProfileToFile(t *testing.T) {
@@ -45,12 +46,12 @@ import (
 //}
 
 func TestReplaceProfileInFile(t *testing.T) {
-	f, err := ioutil.TempFile(os.TempDir(), "credentials")
+	f, err := os.CreateTemp(os.TempDir(), "credentials")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer f.Close()
-	f.WriteString(`[test-lifull]
+	_, err = f.WriteString(`[test-lifull]
 aws_access_key_id = 3123123
 aws_secret_access_key = 31232131
 region = eu-west-1
@@ -60,6 +61,10 @@ aws_access_key_id = fed23eqweasdasd
 aws_secret_access_key = eqwe234wedwd12
 region = eu-west-1`,
 	)
+
+	if err != nil {
+		panic(err)
+	}
 	type args struct {
 		filename    string
 		profileName string
@@ -131,7 +136,8 @@ func TestWriteProfilesToFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := file_manager.WriteProfilesToFile(tt.args.profiles, tt.args.dirname)
+			fileManager := file_manager.NewFileProcessor(&logger.CustomLogger{})
+			err := fileManager.WriteProfilesToFile(tt.args.profiles, tt.args.dirname)
 			assert.NoError(t, err)
 		})
 	}
