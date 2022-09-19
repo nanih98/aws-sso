@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -24,12 +24,14 @@ func RenderREADME() {
 		log.Println(resp.StatusCode)
 	}
 
-	data, err := ioutil.ReadAll(resp.Body)
-
+	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 	}
 
 	out, err := glamour.Render(string(data), "dark")
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Print(out)
 }
