@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/nanih98/aws-sso/dto"
 	"io/ioutil"
 	"os"
+
+	"github.com/nanih98/aws-sso/dto"
 )
 
 func (p *FileProcessor) ReadFile(filePath string) (string, string) {
@@ -27,7 +28,6 @@ func (p *FileProcessor) ReadFile(filePath string) (string, string) {
 
 // FileExists checks if blablabluuu
 func (p *FileProcessor) FileExists(profileName string) string {
-	// lifullconnect-sso.json
 	filePath := profileName + ".json"
 	dirname, err := os.UserHomeDir()
 	if err != nil {
@@ -44,6 +44,37 @@ func (p *FileProcessor) FileExists(profileName string) string {
 
 	p.log.Info("Profile exists")
 	return configPath
+}
+
+func (p *FileProcessor) CredentialsExists(profileName string) (string, string) {
+	filePath := "credentials." + profileName
+	dirname, err := os.UserHomeDir()
+
+	if err != nil {
+		p.log.Fatal(err)
+		return "", ""
+	}
+
+	credentialsPath := dirname + "/.aws/credentials"
+
+	configPath := dirname + "/.aws/" + filePath
+
+	fileExist := checkFileExists(configPath)
+
+	os.Remove(configPath)
+
+	if !fileExist {
+		p.log.Fatal(fmt.Errorf("Credentials file don't exist"))
+		return "", ""
+	}
+
+	p.log.Info("Crentials file exist")
+
+	return configPath, credentialsPath
+}
+
+func (p *FileProcessor) SetCredentials(filePath string, credentialsPath string) {
+	os.Symlink(filePath, credentialsPath)
 }
 
 func checkFileExists(filePath string) bool {

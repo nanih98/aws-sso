@@ -19,14 +19,19 @@ func init() {
 	profile := SetProfile(&log, &level)
 	version := GetCLIVersion()
 	usage := Usage()
+	switcher := Switch(&profileName, &log, &level)
 
 	rootCmd.AddCommand(ssoInit)
 	rootCmd.AddCommand(start)
 	rootCmd.AddCommand(profile)
 	rootCmd.AddCommand(version)
 	rootCmd.AddCommand(usage)
+	rootCmd.AddCommand(switcher)
 
 	//Debug
+	switcher.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
+	switcher.MarkPersistentFlagRequired("profileName")
+
 	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 	start.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 
