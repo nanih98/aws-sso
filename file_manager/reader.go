@@ -71,7 +71,10 @@ func (p *FileProcessor) CredentialsFile(profileName string) {
 		os.Remove(credentials)
 	}
 
-	os.Symlink(credentialsPath, credentials)
+	err = os.Symlink(credentialsPath, credentials)
+	if err != nil {
+		p.log.Fatal(err)
+	}
 
 	p.log.Info(fmt.Sprintf("Using credentials %s", credentialsPath))
 }

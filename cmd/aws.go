@@ -30,13 +30,16 @@ func init() {
 
 	//Debug
 	switcher.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	switcher.MarkPersistentFlagRequired("profileName")
+	err := switcher.MarkPersistentFlagRequired("profileName")
+	if err != nil {
+		log.Warn(err.Error())
+	}
 
 	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 	start.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 
 	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	err := start.MarkPersistentFlagRequired("profileName")
+	err = start.MarkPersistentFlagRequired("profileName")
 	if err != nil {
 		log.Warn(err.Error())
 	}
