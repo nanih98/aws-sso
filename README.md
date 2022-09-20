@@ -13,7 +13,7 @@
 <p align="center" >
 <a href="https://github.com/nanih98/aws-sso/actions/workflows/releases.yml"><img alt="Pipeline" src="https://github.com/nanih98/aws-sso/actions/workflows/releases.yml/badge.svg"></a>
 <a href="https://github.com/nanih98/aws-sso/actions/workflows/lint.yml"><img alt="Pipeline" src="https://github.com/nanih98/aws-sso/actions/workflows/lint.yml/badge.svg"></a>
-<a href="/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/nanih98/aws-sso"></a>
+<a href="https://github.com/nanih98/aws-sso/blob/main/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/nanih98/aws-sso"></a>
 </p>
 
 This is a terminal tool to easly log in in AWS using SSO. Build with❤️in Golang
