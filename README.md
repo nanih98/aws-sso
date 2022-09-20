@@ -63,6 +63,12 @@ $ brew install aws-sso
 ```bash
 $ go install github.com/nanih98/aws-sso
 ```
+Remember to put your `GOPATH` in your `PATH` variable:
+
+```bash
+echo $GOPATH
+export PATH=$PATH:/GOPATH/bin # put this in your .bashrc or .zshrc if needed
+```
 
 ## Download the binaries
 
