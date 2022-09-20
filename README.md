@@ -67,7 +67,7 @@ Remember to put your `GOPATH` in your `PATH` variable:
 
 ```bash
 echo $GOPATH
-export PATH=$PATH:/GOPATH/bin # put this in your .bashrc or .zshrc if needed
+export PATH=$PATH:$GOPATH/bin # put this in your .bashrc or .zshrc if needed
 ```
 
 ## Download the binaries
