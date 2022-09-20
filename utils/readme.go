@@ -9,7 +9,7 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
-var url string = "https://raw.githubusercontent.com/nanih98/aws-sso/main/README.md"
+var url string = "https://raw.githubusercontent.com/nanih98/aws-sso/main/docs/usage.md"
 
 func RenderREADME() {
 	resp, err := http.Get(url)
