@@ -11,7 +11,7 @@ class AwsSso < Formula
   on_macos do
     if Hardware::CPU.arm?
       url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Darwin_arm64.tar.gz"
-      sha256 "a899ab167b900a3d5be54f498060d1f3412def07122f838a24974e9994b0105e"
+      sha256 "5438e14f2aa236838b57003ec4a7a36801034bf9ada52aadd8b831f218811eb1"
 
       def install
         bin.install "aws-sso"
@@ -19,7 +19,7 @@ class AwsSso < Formula
     end
     if Hardware::CPU.intel?
       url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Darwin_x86_64.tar.gz"
-      sha256 "bbe322f3cde2a9ad6a209ec4b11f0c32b54eedab3781dcfb5648466fe4e5a888"
+      sha256 "8ce7ace8526f28c4906a11af73d60e8c3d2e2c9094a401196268578d50658772"
 
       def install
         bin.install "aws-sso"
@@ -28,17 +28,17 @@ class AwsSso < Formula
   end
 
   on_linux do
-    if Hardware::CPU.arm? && !Hardware::CPU.is_64_bit?
-      url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_armv6.tar.gz"
-      sha256 "ee63eb7e41c28bb5734785edce28e99457901c5a645a9b09d13f848e0d155192"
+    if Hardware::CPU.intel?
+      url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_x86_64.tar.gz"
+      sha256 "615c3bd677544d7b5147c9a7e3920edc276d54f3535d77f76750ee4a4e1328a2"
 
       def install
         bin.install "aws-sso"
       end
     end
-    if Hardware::CPU.intel?
-      url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_x86_64.tar.gz"
-      sha256 "84b02fefaf61e0bba69042708f64fce4bf7b3e7596ab2c57469b785039736938"
+    if Hardware::CPU.arm? && !Hardware::CPU.is_64_bit?
+      url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_armv6.tar.gz"
+      sha256 "321148d4b82d4632cc1e205a71495b6329e4a60f9fa6aff5537b780a9d58dbe8"
 
       def install
         bin.install "aws-sso"
@@ -46,7 +46,7 @@ class AwsSso < Formula
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
       url "https://github.com/naih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_arm64.tar.gz"
-      sha256 "e9a7f6fc75a93ed6fd5cf8dea1e8c47a81eb5209fb5c0394b0b709b2ef1f95a8"
+      sha256 "fc5fca89633a49c4773252b3bbe778137c1f094ae878b4c2f523454fa550a957"
 
       def install
         bin.install "aws-sso"
