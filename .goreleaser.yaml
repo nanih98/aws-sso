@@ -38,7 +38,7 @@ brews:
       owner: nanih98
       name: aws-sso
     name: aws-sso
-    url_template: "https://github.com/naih98/aws-sso/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://github.com/nanih98/aws-sso/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
     homepage: https://github.com/nanih98/aws-sso
     commit_author:
       name: goreleaserbot
