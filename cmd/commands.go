@@ -2,8 +2,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/nanih98/aws-sso/file_manager"
 	"runtime"
+
+	"github.com/nanih98/aws-sso/file_manager"
 
 	sso "github.com/nanih98/aws-sso/aws"
 	"github.com/nanih98/aws-sso/configuration"
@@ -42,7 +43,20 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 			fileProcessor := file_manager.NewFileProcessor(log)
 			filePath := fileProcessor.FileExists(*profileName)
 			startURL, region := fileProcessor.ReadFile(filePath)
-			sso.Login(startURL, region, sso.NewLogin(log, fileProcessor))
+			sso.Login(startURL, region, sso.NewLogin(log, fileProcessor), *profileName)
+		},
+	}
+}
+
+func Switcher(profileName *string, log *logger.CustomLogger, level *string) *cobra.Command {
+	return &cobra.Command{
+		Use:   "switch",
+		Short: "Select what credentials you want to use",
+		Long:  "Select what credentials you want to use. Will be used in .aws/credentials file as a symlink",
+		Run: func(cmd *cobra.Command, args []string) {
+			log.LogLevel(*level)
+			fileProcessor := file_manager.NewFileProcessor(log)
+			fileProcessor.CredentialsFile(*profileName)
 		},
 	}
 }
