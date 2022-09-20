@@ -50,7 +50,7 @@ func Logger() CustomLogger {
 	}
 
 	contextLogger := log.WithFields(logrus.Fields{
-		"app": "aws-sso",
+		// "app": "aws-sso",
 	})
 
 	log.SetFormatter(&logrus.TextFormatter{
