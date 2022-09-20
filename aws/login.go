@@ -49,7 +49,7 @@ func NewLogin(log *logger.CustomLogger, fileManager *file_manager.FileProcessor)
 }
 
 // Login function blablabla
-func Login(startURL string, region string, awsSso *AWSLogin) {
+func Login(startURL string, region string, awsSso *AWSLogin, profileName string) {
 	var err error
 	os.Setenv("AWS_REGION", region)
 	awsSso.log.Info("Starting the program....")
@@ -98,7 +98,7 @@ func Login(startURL string, region string, awsSso *AWSLogin) {
 	}
 	wg.Wait()
 
-	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials")
+	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials."+profileName)
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
