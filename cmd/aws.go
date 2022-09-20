@@ -30,17 +30,30 @@ func init() {
 
 	//Debug
 	switcher.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	switcher.MarkPersistentFlagRequired("profileName")
+	err := switcher.MarkPersistentFlagRequired("profileName")
+	if err != nil {
+		log.Warn(err.Error())
+	}
 
 	ssoInit.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 	start.PersistentFlags().StringVar(&level, "level", "info", "Setup log level")
 
 	start.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	start.MarkPersistentFlagRequired("profileName")
+	err = start.MarkPersistentFlagRequired("profileName")
+	if err != nil {
+		log.Warn(err.Error())
+	}
 
 	ssoInit.PersistentFlags().StringVar(&startURL, "startURL", "", "Setup AWS SSO start URL")
 	ssoInit.PersistentFlags().StringVar(&region, "region", "eu-west-1", "AWS region")
 	ssoInit.PersistentFlags().StringVar(&profileName, "profileName", "", "Profile name")
-	ssoInit.MarkPersistentFlagRequired("startURL")
-	ssoInit.MarkPersistentFlagRequired("region")
+	err = ssoInit.MarkPersistentFlagRequired("startURL")
+	if err != nil {
+		log.Warn(err.Error())
+	}
+
+	err = ssoInit.MarkPersistentFlagRequired("region")
+	if err != nil {
+		log.Warn(err.Error())
+	}
 }

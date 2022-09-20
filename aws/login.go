@@ -98,7 +98,10 @@ func Login(startURL string, region string, awsSso *AWSLogin, profileName string)
 	}
 	wg.Wait()
 
-	awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials."+profileName)
+	err = awsSso.fileManager.WriteProfilesToFile(awsSso.profiles, utils.GetUserHome(awsSso.log)+"/.aws/credentials."+profileName)
+	if err != nil {
+		awsSso.log.Fatal(err)
+	}
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
@@ -191,7 +194,7 @@ func (a *AWSLogin) GenerateToken() error {
 
 func printLoggingStatus(credentials *sso.GetRoleCredentialsOutput, customLogger *logger.CustomLogger) {
 	customLogger.Debug("Writing file....")
-	customLogger.Debug(fmt.Sprintf("\n\nPrinting credentials"))
+	customLogger.Debug("\n\nPrinting credentials")
 	customLogger.Debug(fmt.Sprintf("Access key id: %s", aws.ToString(credentials.RoleCredentials.AccessKeyId)))
 	customLogger.Debug(fmt.Sprintf("Secret access key: %s", aws.ToString(credentials.RoleCredentials.SecretAccessKey)))
 	customLogger.Debug(fmt.Sprintf("Expiration: %d", aws.ToInt64(&credentials.RoleCredentials.Expiration)))

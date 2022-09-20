@@ -3,13 +3,13 @@ package file_manager
 import (
 	"bytes"
 	"encoding/json"
+	"io"
+	"os"
+	"strings"
+
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/utils"
 	"github.com/pelletier/go-toml/v2"
-	"io"
-	"io/ioutil"
-	"os"
-	"strings"
 )
 
 func (p *FileProcessor) WriteProfilesToFile(profiles []dto.Profile, dirname string) error {
@@ -20,12 +20,23 @@ func (p *FileProcessor) WriteProfilesToFile(profiles []dto.Profile, dirname stri
 
 	defer f.Close()
 
-	for i, _ := range profiles {
+	for i := range profiles {
 		data, _ := json.Marshal(profiles[i])
 		b := new(bytes.Buffer)
-		convert(strings.NewReader(string(data)), b)
-		f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
-		f.Write([]byte("\n"))
+		err := convert(strings.NewReader(string(data)), b)
+		if err != nil {
+			p.log.Warn(err.Error())
+		}
+
+		_, err = f.Write([]byte(strings.ReplaceAll(b.String(), "'", "")))
+		if err != nil {
+			p.log.Warn(err.Error())
+		}
+
+		_, err = f.Write([]byte("\n"))
+		if err != nil {
+			p.log.Warn(err.Error())
+		}
 	}
 	return nil
 }
@@ -51,6 +62,6 @@ func (p *FileProcessor) WriteConfigFile(config []byte, profileName string) {
 	}
 	fileName := directory + profileName + ".json"
 	p.log.Info("Saving profile configuration for " + profileName)
-	_ = ioutil.WriteFile(fileName, config, 0644)
+	_ = os.WriteFile(fileName, config, 0644)
 	p.log.Info("Configuration saved in " + fileName)
 }

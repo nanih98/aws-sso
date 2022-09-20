@@ -2,9 +2,10 @@ package configuration
 
 import (
 	"fmt"
-	"github.com/nanih98/aws-sso/dto"
-	"io/ioutil"
+	"os"
 	"strings"
+
+	"github.com/nanih98/aws-sso/dto"
 )
 
 func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, awsSessionToken string) (dto.Profile, error) {
@@ -37,7 +38,7 @@ func ConfigGenerator(account string, awsAccessKey string, awsSecretKey string, a
 //}
 
 func ReplaceProfileInFile(filename, profileName string, profile dto.Profile) error {
-	input, err := ioutil.ReadFile(filename)
+	input, err := os.ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -53,7 +54,7 @@ func ReplaceProfileInFile(filename, profileName string, profile dto.Profile) err
 		}
 	}
 	output := strings.Join(lines, "\n")
-	err = ioutil.WriteFile(filename, []byte(output), 0644)
+	err = os.WriteFile(filename, []byte(output), 0644)
 	if err != nil {
 		return err
 	}

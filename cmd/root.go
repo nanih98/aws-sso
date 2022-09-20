@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/nanih98/aws-sso/utils"
@@ -15,7 +16,8 @@ var rootCmd = &cobra.Command{
 	Long:  `Get your AWS SSO credentials easily from your terminal of all your accounts`,
 	Run: func(cmd *cobra.Command, args []string) {
 		utils.PrintBanner(version)
-		cmd.Help()
+		err := cmd.Help()
+		log.Println(err)
 	},
 }
 

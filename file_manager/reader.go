@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/nanih98/aws-sso/dto"
@@ -13,7 +12,7 @@ import (
 func (p *FileProcessor) ReadFile(filePath string) (string, string) {
 	var data dto.Configuration
 
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		p.log.Fatal(err)
 	}
@@ -72,7 +71,10 @@ func (p *FileProcessor) CredentialsFile(profileName string) {
 		os.Remove(credentials)
 	}
 
-	os.Symlink(credentialsPath, credentials)
+	err = os.Symlink(credentialsPath, credentials)
+	if err != nil {
+		p.log.Fatal(err)
+	}
 
 	p.log.Info(fmt.Sprintf("Using credentials %s", credentialsPath))
 }
