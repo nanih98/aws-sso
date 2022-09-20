@@ -19,7 +19,7 @@ func init() {
 	profile := SetProfile(&log, &level)
 	version := GetCLIVersion()
 	usage := Usage()
-	switcher := Switch(&profileName, &log, &level)
+	switcher := Switcher(&profileName, &log, &level)
 
 	rootCmd.AddCommand(ssoInit)
 	rootCmd.AddCommand(start)

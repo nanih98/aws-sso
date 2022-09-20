@@ -48,7 +48,7 @@ func StartCommand(profileName *string, log *logger.CustomLogger, level *string) 
 	}
 }
 
-func Switch(profileName *string, log *logger.CustomLogger, level *string) *cobra.Command {
+func Switcher(profileName *string, log *logger.CustomLogger, level *string) *cobra.Command {
 	return &cobra.Command{
 		Use:   "switch",
 		Short: "Select what credentials you want to use",
@@ -56,8 +56,7 @@ func Switch(profileName *string, log *logger.CustomLogger, level *string) *cobra
 		Run: func(cmd *cobra.Command, args []string) {
 			log.LogLevel(*level)
 			fileProcessor := file_manager.NewFileProcessor(log)
-			filePath, credentialsPath := fileProcessor.CredentialsExists(*profileName)
-			fileProcessor.SetCredentials(filePath, credentialsPath)
+			fileProcessor.CredentialsFile(*profileName)
 		},
 	}
 }

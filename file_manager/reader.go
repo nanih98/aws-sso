@@ -46,35 +46,35 @@ func (p *FileProcessor) FileExists(profileName string) string {
 	return configPath
 }
 
-func (p *FileProcessor) CredentialsExists(profileName string) (string, string) {
-	filePath := "credentials." + profileName
+// .aws/credentials.lifullconnect exists
+func (p *FileProcessor) CredentialsFile(profileName string) {
 	dirname, err := os.UserHomeDir()
 
 	if err != nil {
 		p.log.Fatal(err)
-		return "", ""
 	}
 
-	credentialsPath := dirname + "/.aws/credentials"
+	// Constant variable .aws/credentials file
+	credentials := dirname + "/.aws/credentials"
 
-	configPath := dirname + "/.aws/" + filePath
+	// .aws/credentials.PROFILENAME
+	credentialsPath := dirname + "/.aws/credentials." + profileName
 
-	fileExist := checkFileExists(configPath)
-
-	os.Remove(configPath)
+	fileExist := checkFileExists(credentialsPath)
 
 	if !fileExist {
-		p.log.Fatal(fmt.Errorf("Credentials file don't exist"))
-		return "", ""
+		p.log.Fatal(fmt.Errorf("Credentials file %s don't exist", credentialsPath))
 	}
 
-	p.log.Info("Crentials file exist")
+	credentialsExists := checkFileExists(credentials)
 
-	return configPath, credentialsPath
-}
+	if credentialsExists {
+		os.Remove(credentials)
+	}
 
-func (p *FileProcessor) SetCredentials(filePath string, credentialsPath string) {
-	os.Symlink(filePath, credentialsPath)
+	os.Symlink(credentialsPath, credentials)
+
+	p.log.Info(fmt.Sprintf("Using credentials %s", credentialsPath))
 }
 
 func checkFileExists(filePath string) bool {
