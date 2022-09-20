@@ -16,7 +16,7 @@
 <a href="/LICENSE"><img alt="LICENSE" src="https://img.shields.io/github/license/nanih98/aws-sso"></a>
 </p>
 
-This is a terminal tool to easly log in in aws using SSO. Build with❤️in Golang
+This is a terminal tool to easly log in in AWS using SSO. Build with❤️in Golang
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -25,7 +25,6 @@ This is a terminal tool to easly log in in aws using SSO. Build with❤️in Gol
 - [About](#about)
   - [Initial requirements](#initial-requirements)
   - [Workflow](#workflow)
-  - [Tested environments](#tested-environments)
 - [Installation](#installation)
   - [Using brew](#using-brew)
   - [Using go](#using-go)
@@ -47,11 +46,6 @@ The purpose of this tool is to be able to obtain the credentials accesskey, secr
 
 1. Open your browser and log in using your external identity provider configured with AWS SSO (gmail for example if you use google workspaces as external idp)
 2. Install the tool using one of the ways described below
-
-## Tested environments
-
-* Tested with Google Workspaces as external identity provider in AWS SSO
-* Tested in Mac OSX and Linux
 
 # Installation
 
@@ -82,13 +76,13 @@ Read [usage](./docs/usage.md) or type:
 $ aws-sso usage
 ```
 
-
 # Credits 
 
 - [Github issue](https://github.com/aws/aws-sdk-go-v2/issues/1222)
 - [Cobra](https://github.com/spf13/cobra)
 - [Charm](https://charm.sh/)
 - [Go clipboard](https://github.com/golang-design/clipboard)
+- [Promptui](https://github.com/manifoldco/promptui)
 
 # Contribution
 
