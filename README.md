@@ -27,8 +27,10 @@ This is a terminal tool to easly log in in AWS using SSO. Build with❤️in Gol
   - [Workflow](#workflow)
 - [Installation](#installation)
   - [Using brew](#using-brew)
+  - [Linux](#linux)
   - [Using go](#using-go)
   - [Download the binaries](#download-the-binaries)
+    - [Supported OS](#supported-os)
 - [Usage](#usage)
 - [Credits](#credits)
 - [Contribution](#contribution)
@@ -40,7 +42,12 @@ This is a terminal tool to easly log in in AWS using SSO. Build with❤️in Gol
 The purpose of this tool is to be able to obtain the credentials accesskey, secretkey, and token of the AWS accounts that your user has access to through SSO.
 
 ## Initial requirements
-....IN PROGRESS
+
+* [Go](https://go.dev/doc/install) (if you decide to install this tool using `go install`)
+* macOS: require Cgo, no dependency
+* Linux: require X11 dev package. For instance, install libx11-dev or xorg-dev or libX11-devel to access X window system.
+
+> This libraries are necessary for the clipboard package (used in `aws-sso profile` command).
 
 ## Workflow
 
@@ -56,27 +63,33 @@ $ brew tap nanih98/aws-sso https://github.com/nanih98/aws-sso
 $ brew install aws-sso
 ```
 
-## Using go
+## Linux
 
-**[Install go](https://go.dev/doc/install)**
+
+
+## Using go
 
 ```bash
 $ go install github.com/nanih98/aws-sso
 ```
+
 Remember to put your `GOPATH` in your `PATH` variable:
 
 ```bash
-echo $GOPATH
-export PATH=$PATH:$GOPATH/bin # put this in your .bashrc or .zshrc if needed
+$ echo $GOPATH
+$ export PATH=$PATH:$GOPATH/bin # put this in your .bashrc or .zshrc if needed
 ```
-
-Possible missing libraries in Linux to use the clipboard:
-
-> apt-get install libx11-6 libx11-dev
 
 ## Download the binaries
 
 [Releases](https://github.com/nanih98/aws-sso/releases)
+
+### Supported OS
+
+| OS        | ARM64 | AMD64 |
+|-----------|:-----:|------:|
+| Mac       |  √    |   √   |
+| Linux     |  √    |   √   |
 
 # Usage
 
