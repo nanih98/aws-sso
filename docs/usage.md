@@ -51,7 +51,7 @@ This will create a symlink in your home `.aws/`. The selected profile will be a 
 
 4. Set the profile
 
-Once your credentials are configured (with the previous symlink) inside your **.aws/credentials** file, this command will read and promt each profile in an interactive terminal list. Then, the profile you selected, will be copied in your clipboard and then you will execute the command **export AWS_PROFILE=yourprofile**
+Once your credentials are configured (with the previous symlink) inside your **.aws/credentials** file, this command will read and promt each profile in an interactive terminal list. Then, the profile you selected, will be copied in your clipboard and then you will execute the command **export AWS_PROFILE=yourprofile** You can export the variable directly from a child process. Something like this issue <https://stackoverflow.com/questions/1506010/how-to-use-export-with-python-on-linux>
 
 > Note: in the interactive terminal, you can search for your profiles using SHIFT+/
 
