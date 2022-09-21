@@ -70,6 +70,10 @@ echo $GOPATH
 export PATH=$PATH:$GOPATH/bin # put this in your .bashrc or .zshrc if needed
 ```
 
+Possible missing libraries in Linux to use the clipboard:
+
+> apt-get install libx11-6 libx11-dev
+
 ## Download the binaries
 
 [Releases](https://github.com/nanih98/aws-sso/releases)

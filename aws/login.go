@@ -102,6 +102,7 @@ func Login(startURL string, region string, awsSso *AWSLogin, profileName string)
 	if err != nil {
 		awsSso.log.Fatal(err)
 	}
+	awsSso.log.Info("Profiles fetched!")
 }
 func (a *AWSLogin) GetAWSConfig() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
@@ -133,7 +134,7 @@ func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountR
 		}
 		printLoggingStatus(credentials, a.log)
 		profile, err := configuration.ConfigGenerator(
-			aws.ToString(accountInfo.AccountName),
+			fmt.Sprintf("%s-%s", aws.ToString(accountInfo.AccountName), aws.ToString(roleInfo.RoleName)),
 			aws.ToString(credentials.RoleCredentials.AccessKeyId),
 			aws.ToString(credentials.RoleCredentials.SecretAccessKey),
 			aws.ToString(credentials.RoleCredentials.SessionToken))
@@ -143,6 +144,7 @@ func (a *AWSLogin) FetchRoleCredentials(listAccountRolesOutput *sso.ListAccountR
 		a.profiles = append(a.profiles, profile)
 	}
 }
+
 func (a *AWSLogin) TriggerLogin() error {
 	url := aws.ToString(a.deviceAuth.VerificationUriComplete)
 	a.log.Info(fmt.Sprintf("If browser is not opened automatically, please open link:\n%v\n", url))
