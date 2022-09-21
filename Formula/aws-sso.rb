@@ -5,21 +5,21 @@
 class AwsSso < Formula
   desc "AWS account credentials using SSO"
   homepage "https://github.com/nanih98/aws-sso"
-  version "0.0.1"
+  version "0.0.2"
   license "Apache 2.0 license"
 
   on_macos do
     if Hardware::CPU.intel?
-      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Darwin_x86_64.tar.gz"
-      sha256 "4ffbdc1816c93d55bc240bc9f9c2bea9b85a34b700d32a401d1394c806de843a"
+      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.2/aws-sso_0.0.2_Darwin_x86_64.tar.gz"
+      sha256 "ffaa962fb6c733043342c8fb1503c4a9a2a02c55d78a13b48aa6a0e7e65e0d12"
 
       def install
         bin.install "aws-sso"
       end
     end
     if Hardware::CPU.arm?
-      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Darwin_arm64.tar.gz"
-      sha256 "4dadfc129a3927829c2b767e4afa04d25a77bb99b76cdb6f67db29a856c92833"
+      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.2/aws-sso_0.0.2_Darwin_arm64.tar.gz"
+      sha256 "501469493a723983cf10893a09d936b75f5f9070ce4fd1f8341e22668b399da0"
 
       def install
         bin.install "aws-sso"
@@ -29,24 +29,24 @@ class AwsSso < Formula
 
   on_linux do
     if Hardware::CPU.arm? && !Hardware::CPU.is_64_bit?
-      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_armv6.tar.gz"
-      sha256 "a549a3320d76503da1ae03767c57c557ee92091686e977b013a6e8405d0dcbb7"
-
-      def install
-        bin.install "aws-sso"
-      end
-    end
-    if Hardware::CPU.intel?
-      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_x86_64.tar.gz"
-      sha256 "e67a22d5f90c4b30c0ac06ffa57863463ed8dcede4f05ebd7c22dfef686d53f0"
+      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.2/aws-sso_0.0.2_Linux_armv6.tar.gz"
+      sha256 "dbbdbf5d2dd092c61e50086f769eaaa15a5ce988d67c60693e55a2457dad3552"
 
       def install
         bin.install "aws-sso"
       end
     end
     if Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
-      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.1/aws-sso_0.0.1_Linux_arm64.tar.gz"
-      sha256 "47ead52b7c662ffd2623c69f9e3e22f097e6165bbbeda46986e6cde486a14bc7"
+      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.2/aws-sso_0.0.2_Linux_arm64.tar.gz"
+      sha256 "a7f7e221e6fd86dc26203996f80bc6fd45437f5d731d8d106a0aceaa6277715a"
+
+      def install
+        bin.install "aws-sso"
+      end
+    end
+    if Hardware::CPU.intel?
+      url "https://github.com/nanih98/aws-sso/releases/download/v0.0.2/aws-sso_0.0.2_Linux_x86_64.tar.gz"
+      sha256 "5497425a37eddbe2bddde8c9273edfdc25e98545baeac6538fba396ce0e2b79a"
 
       def install
         bin.install "aws-sso"
