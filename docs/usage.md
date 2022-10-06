@@ -10,13 +10,11 @@ $ aws-sso config --startURL "https://myaccount.awsapps.com/start" --region us-ea
 You can save more accounts:
 
 ```bash
-aws-sso config --startURL "https://myaccount2.awsapps.com/start" --region eu-west-1 --profileName="myaccount2"
+$ aws-sso config --startURL "https://myaccount2.awsapps.com/start" --region eu-west-1 --profileName="myaccount2"
 ```
 * **startURL:** The AWS SSO url (get it from the AWS CONSOLE where you have your configured SSO). *Is required*
 * **region:** region of AWS of your SSO resource. The region where you created the SSO inside your AWS account. *Is required*
 * **profileName:** the name of the account, for example, the name of the company or the platform. *Is required*
-
-> **NOTE:** this configuration will be saved inside your home `.aws-sso/profilename.json`
 
 2. Start the application
 
