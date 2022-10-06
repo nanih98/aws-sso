@@ -10,13 +10,11 @@ $ aws-sso config --startURL "https://myaccount.awsapps.com/start" --region us-ea
 You can save more accounts:
 
 ```bash
-aws-sso config --startURL "https://myaccount2.awsapps.com/start" --region eu-west-1 --profileName="myaccount2"
+$ aws-sso config --startURL "https://myaccount2.awsapps.com/start" --region eu-west-1 --profileName="myaccount2"
 ```
 * **startURL:** The AWS SSO url (get it from the AWS CONSOLE where you have your configured SSO). *Is required*
 * **region:** region of AWS of your SSO resource. The region where you created the SSO inside your AWS account. *Is required*
 * **profileName:** the name of the account, for example, the name of the company or the platform. *Is required*
-
-> **NOTE:** this configuration will be saved inside your home `.aws-sso/profilename.json`
 
 2. Start the application
 
@@ -51,9 +49,7 @@ This will create a symlink in your home `.aws/`. The selected profile will be a 
 
 4. Set the profile
 
-Once your credentials are configured (with the previous symlink) inside your **.aws/credentials** file, this command will read and promt each profile in an interactive terminal list. Then, the profile you selected, will be copied in your clipboard and then you will execute the command **export AWS_PROFILE=yourprofile** You can export the variable directly from a child process. Something like this issue <https://stackoverflow.com/questions/1506010/how-to-use-export-with-python-on-linux>
-
-> Note: in the interactive terminal, you can search for your profiles using SHIFT+/
+Take a look [profile](./profile.md) 
 
 5. Usage 
 
@@ -63,7 +59,7 @@ This will show this file in a terminal markdown render.
 $ aws-sso usage
 ```
 
-1. Version
+6. Version
 
 Get your aws-sso version installed in your local.
 

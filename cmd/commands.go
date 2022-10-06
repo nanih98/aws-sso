@@ -90,7 +90,8 @@ func Usage() *cobra.Command {
 		Short: "Usage will print the README.md of the project",
 		Long:  "Usage will print the readme of the project. You need internet connection because it will download the README from the github repository",
 		Run: func(cmd *cobra.Command, args []string) {
-			utils.RenderREADME()
+			var url string = "https://raw.githubusercontent.com/nanih98/aws-sso/main/docs/usage.md"
+			utils.RenderREADME(url)
 		},
 	}
 }

@@ -9,9 +9,7 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
-var url string = "https://raw.githubusercontent.com/nanih98/aws-sso/main/docs/usage.md"
-
-func RenderREADME() {
+func RenderREADME(url string) {
 	resp, err := http.Get(url)
 
 	if err != nil {
