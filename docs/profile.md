@@ -19,3 +19,5 @@ Save this function inside your `.bashrc` or `.zshrc`.
 
 Is an interactive menu terminal to change `AWS_PROFILE` at the moment in your terminal.
 
+https://raw.githubusercontent.com/nanih98/aws-sso/main/docs/profile.md
+
