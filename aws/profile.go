@@ -35,8 +35,7 @@ func getProfiles(filepath string) []dto.Profile {
 }
 
 func Profile(log *logger.CustomLogger) {
-	log.Info("Setting your AWS_PROFILE environment variable...")
-	log.Info("Reading file .aws/credentials")
+	log.Warn("This command will read all the profiles inside your .aws/credentials file. After reading it, the intention is to set the profile as an AWS_PORFILE variable, but it is not possible from a child process. For more information: ")
 	credentialsPath := utils.GetUserHome(log) + "/.aws/credentials"
 
 	profiles := getProfiles(credentialsPath)
@@ -71,6 +70,5 @@ func Profile(log *logger.CustomLogger) {
 		return
 	}
 
-	log.Info(fmt.Sprintf("Execute $ export AWS_PROFILE='%s' or see this bash/zsh function --> https://", profiles[i].Key))
-
+	log.Info(fmt.Sprintf("Execute $ export AWS_PROFILE='%s' or see this following README...", profiles[i].Key))
 }
