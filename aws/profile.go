@@ -10,7 +10,6 @@ import (
 	"github.com/nanih98/aws-sso/dto"
 	"github.com/nanih98/aws-sso/logger"
 	"github.com/nanih98/aws-sso/utils"
-	"golang.design/x/clipboard"
 )
 
 func getProfiles(filepath string) []dto.Profile {
@@ -33,15 +32,6 @@ func getProfiles(filepath string) []dto.Profile {
 	}
 
 	return items
-}
-
-func clipBoard(log *logger.CustomLogger, profile string) {
-	err := clipboard.Init()
-	if err != nil {
-		log.Fatal(err)
-	}
-	clipboard.Write(clipboard.FmtText, []byte(fmt.Sprintf("export AWS_PROFILE='%s'", profile)))
-	log.Info(fmt.Sprintf("Profile %s copied to the clipboard, paste the command in your terminal to set the AWS_PROFILE env", profile))
 }
 
 func Profile(log *logger.CustomLogger) {
@@ -81,6 +71,6 @@ func Profile(log *logger.CustomLogger) {
 		return
 	}
 
-	// Return the selected profile to the clipboard
-	clipBoard(log, profiles[i].Key)
+	log.Info(fmt.Sprintf("Execute $ export AWS_PROFILE='%s' or see this bash/zsh function --> https://", profiles[i].Key))
+
 }
